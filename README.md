@@ -13,6 +13,7 @@ ChloroBras is a nextflow pipeline allowing the automatic quality assemment of ba
 - Busco DB : https://busco-data.ezlab.org/v5/data/lineages/ `busco --download prokaryota` (Prokaryota : 8,3G)
 
 - CheckM1 DB : https://data.ace.uq.edu.au/public/CheckM_databases/
+
   or `wget https://data.ace.uq.edu.au/public/CheckM_databases/checkm_data_2015_01_16.tar.gz` (275 MB)
 
 - CheckM2 DB : `checkm2 database --download --path /custom/path/` (2.9 GB)
@@ -26,11 +27,13 @@ ChloroBras is a nextflow pipeline allowing the automatic quality assemment of ba
 - Physeter DB : 
 
 - GTDBTK DB : https://ecogenomics.github.io/GTDBTk/installing/index.html
+
   or `wget https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/auxillary_files/gtdbtk_package/full_package/gtdbtk_data.tar.gz` (106 GB)
 
 - Original singularity image : https://dox.uliege.be/index.php/s/fUyVuiLwJV0AkB2 (3.4 GB)
 
 - TaxDir : https://figshare.com/articles/software/taxdump/17124074?file=31658918
+
   `wget https://figshare.com/ndownloader/files/32405687 -O Cornet-Baurain.tgz`  (65.46 MB)
 
 ## Parameters
