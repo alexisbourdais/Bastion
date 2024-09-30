@@ -8,7 +8,7 @@
 
 
 **Changement from original script :**
-- Nextflow dsl-2
+- Nextflow dsl 2
 - Includes GTDBTK tool
 - Final report includes GTDBTK and Eukcc results
 - Busco plots, Diamond plots from Gunc results and Krona from Kraken results
