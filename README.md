@@ -37,6 +37,8 @@ ChloroBras is a nextflow pipeline allowing the automatic quality assemment of ba
 
 ## Documentation
 
+- GENERA : https://github.com/Lcornet/GENERA
+
 - Busco : https://busco.ezlab.org/
 
 - CheckM1 : https://github.com/Ecogenomics/CheckM/wiki
