@@ -148,10 +148,34 @@ def main(main_file, mode, ckcompleteness, ckcontamination, gunccss, guncrrs, phy
                 completeness = split_list[1]
                 conta = split_list[2]
                 contam_of[Genome]['CK2'] = conta
-                compl_of[Genome]['CK2'] = completeness  
+                compl_of[Genome]['CK2'] = completeness
 
-        
-        #print(quast_of)
+        #GTDBTK
+        GTfile = open('gtdbtk.bac120.summary.tsv')
+        for line in GTfile:
+            record = line.replace("\n", "")
+            if ('user_genome' in record):
+                continue
+            else:
+                split_list = record.split("\t")
+                Genome = split_list[0]
+                placement = split_list[1]
+                contam_of[Genome]['GTDB'] = placement
+
+        #Eukcc
+        EUKfile = open('eukcc.csv')
+        for line in EUKfile:
+            record = line.replace("\n", "")
+            if ('bin' in record):
+                continue
+            else:
+                split_list = record.split("\t")
+                Genome = split_list[0]
+                Genome = Genome.replace(".fasta", "")
+                completeness = split_list[1]
+                conta = split_list[2]
+                contam_of[Genome]['Euk'] = conta
+                contam_of[Genome]['Euk_compl'] = completeness
 
         #Write the table
         file_out.write('Genome' + "\t" + 'Checkm_completeness' + "\t" + 'Checkm_contamination' + "\t" + 'Checkm_str' + "\t" 
@@ -160,10 +184,10 @@ def main(main_file, mode, ckcompleteness, ckcontamination, gunccss, guncrrs, phy
         + "\t" + 'GUNC_conta' + "\t" + 'Physeter_placement' + "\t" + 'Physeter_contamination' 
         + "\t" + 'Kraken_placement' + "\t" + 'Kraken_contamination'
         + "\t" + 'Checkm2_completeness' + "\t" + 'Checkm2_contamination'
+        + "\t" + 'Gtdbtk_placement' + "\t" + 'Eukcc2_contamination' + "\t" + 'Eukcc2_completeness'
         + "\t" + "quast_#contigs" + "\t" + 'quast_tot_length' + "\t" + 'quast_GC' + "\t" + 'quast_N50' + "\n")     
 
         for genome in contam_of:
-            #print(genome)
             tool_of = contam_of[genome]
             Checkm_comp = compl_of[genome]['checkm']
             Busco_comp = compl_of[genome]['busco']
@@ -186,16 +210,25 @@ def main(main_file, mode, ckcompleteness, ckcontamination, gunccss, guncrrs, phy
             quast_GC = quast_of[genome]['GC']
             quast_N50 = quast_of[genome]['N50']
 
+            gtdbtk_place = tool_of['GTDB']
+
+            eukcc_conta = tool_of['Euk']
+            if not eukcc_conta:
+                eukcc_conta = "NA"
+            eukcc_comp = tool_of['Euk_compl']
+            if not eukcc_comp:
+                eukcc_comp = "NA"
+
             file_out.write(str(genome) + "\t" + str(Checkm_comp) + "\t" + str(Checkm_conta) + "\t" + str(Checkm_str) 
             + "\t" + str(Busco_place) + "\t" + str(Busco_comp) + "\t" + str(Busco_conta) 
             + "\t" + str(GUNC_CSS) + "\t" + str(GUNC_RRS) + "\t" + str(GUNC_status) 
             + "\t" + str(GUNC_conta) + "\t" + str(Physeter_place) + "\t" + str(Physeter_conta) 
             + "\t" + str(Kraken_place) + "\t" + str(Kraken_conta)
             + "\t" + str(Checkm2_comp) + "\t" + str(Checkm2_conta)
+            + "\t" + str(gtdbtk_place) + "\t" + str(eukcc_conta) + "\t" + str(eukcc_comp)
             + "\t" + str(quast_contigs) + "\t" + str(quast_length) + "\t" + str(quast_GC) + "\t" + str(quast_N50) + "\n")
 
             #print in positive list
-            #print(contam_of)
             if ((float(Checkm_comp) > float(ckcompleteness)) and (float(Checkm_conta) < float(ckcontamination))
             and (float(Busco_comp) > float(bucompleteness)) and (float(Busco_conta) < float(budups))
             and (float(GUNC_CSS) < float(gunccss)) and (float(GUNC_RRS) > float(guncrrs))
