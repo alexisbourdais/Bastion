@@ -98,44 +98,20 @@ if (params.help){
 
 results = file(params.resultsDir)
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
-process setup {
-
-"""
-setup-taxdir.pl --taxdir=$workingdir
-echo $workingdir > taxdump_path.txt
-
-
-############################## PROCESS FORMAT
-mkdir TEMP
-cp GENERA-input/*.fasta TEMP
-cd TEMP
-find *.fasta > list
-sed -i -e 's/.fasta//g' list
-for f in `cat list`; do mv \$f.fasta \$f.fna; done
-for f in `cat list`; do inst-abbr-ids.pl \$f.fna --id-regex=:DEF --id-prefix=\$f; done
-for f in `cat list`; do inst-split-seqs.pl \$f-abbr.fna --out=-split; done
-cd ../
-mkdir SPLIT
-mv TEMP/*split* SPLIT/
-mkdir GENOMES/
-mv TEMP/*abbr* GENOMES/
-echo "GENERA info: format .fasta files" >> GENERA-contams.log
-"""
-}
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 process busco {
 
     label 'process_high'
 
     publishDir "${results}/", mode: 'copy'
 
+    errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
+
     input:
     path(assemblyDir)
 
     output:
-    path("Busco/batch_summary.txt")
+    path("Busco/batch_summary.txt"), emit: report
+    path("Busco/busco_figure.png")
 
     script:
     """
@@ -145,7 +121,10 @@ process busco {
     -l ${params.lineage_busco} \
     -c ${task.cpus} \
     -o Busco
-    #--metaeuk
+
+    mv Busco/*/short_summary*.txt Busco/
+
+    generate_plot.py -wd Busco
     """
 }
 
@@ -188,7 +167,7 @@ process checkm2 {
 
     publishDir "${results}/", mode: 'copy'
 
-    errorStrategy { task.attempt <= 3 ? 'retry' : 'ignore' }
+    errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
 
     input:
     path(assemblyDir)
@@ -210,15 +189,17 @@ process checkm2 {
 
 process eukcc_folder {
 
-    label 'process_medium'
+    label 'process_high'
 
     publishDir "${results}/", mode: 'copy'
+
+    errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
 
     input:
     path(assemblyDir)
 
     output:
-    path("Eukcc")
+    path("Eukcc/eukcc.csv")
 
     script:
     """
@@ -237,14 +218,14 @@ process gunc {
 
     publishDir "${results}/", mode: 'copy'
 
-    errorStrategy { task.attempt <= 3 ? 'retry' : 'ignore' }
+    errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
 
     input:
     path(assemblyDir)
 
     output:
     path("Gunc/GUNC.progenomes_2.1.maxCSS_level.tsv"), emit: report
-    path("Gunc/")
+    path("Gunc/diamond_output/*.html")
 
     script:
     """
@@ -275,13 +256,14 @@ process gtdbtk {
 
     publishDir "${results}/", mode: 'copy'
 
-    errorStrategy { task.attempt <= 3 ? 'retry' : 'ignore' }
+    errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
 
     input:
     path(assemblyDir)
 
     output:
-    path("Gtdbtk"), type: 'dir'
+    path("Gtdbtk/gtdbtk.bac120.summary.tsv"), emit: report
+    path("Gtdbtk/identify")
 
     script:
     """
@@ -302,7 +284,7 @@ process checkm1 {
 
     publishDir "${results}/", mode: 'copy'
 
-    errorStrategy { task.attempt <= 3 ? 'retry' : 'ignore' }
+    errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
 
     input:
     path(assemblyDir)
@@ -320,10 +302,8 @@ process checkm1 {
         filename="\$(basename -- "\${file}")"
         filename="\${filename%.*}"
         cp "\${file}" "\${newDir}/Genome_\${filename}.${params.format}"
-        #mv "\${file}" "${assemblyDir}/Genome_\${filename}.${params.format}"
     done
 
-    #checkm lineage_wf -t ${task.cpus} -x ${params.format} ${assemblyDir} checkm1_outfolder > checkm1.results
     checkm lineage_wf -t ${task.cpus} -x ${params.format} \${newDir} checkm1_outfolder > checkm1.results
 
     rm -rf "\${newDir}"
@@ -337,9 +317,9 @@ process checkm1 {
     """
 }
 
-/*              A TESTER
+/* A TESTER
 
-// Remplacer le checkm1.results par storage/bin_stats_ext.tsv   
+//Remplacer le checkm1.results par storage/bin_stats_ext.tsv   
 grep "NomAsm" bin_stats_ext.tsv | cut -f1 -d',' => 100_FlyeAsm	{'marker lineage': 'g__Pseudomonas'
 grep "Flye" bin_stats_ext.tsv | cut -f11 -d','  => 'Completeness': 93.84585410847941
 grep "Flye" bin_stats_ext.tsv | cut -f12 -d','  => 'Contamination': 1.6551383399209487
@@ -351,15 +331,14 @@ process kraken2 {
     label 'contams'
     label 'process_high'
 
-    publishDir "${results}/Kraken/", mode: 'copy'
+    //publishDir "${results}/Kraken/", mode: 'copy'
 
-    errorStrategy { task.attempt <= 3 ? 'retry' : 'ignore' }
+    errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
 
     input:
     path(assembly)
 
     output:
-    path("${assembly.baseName}.out")
     path("${assembly.baseName}-parsed.report"), emit: report
     path("${assembly.baseName}.report.txt"), emit: krona
 
@@ -379,8 +358,7 @@ process kraken2 {
     #labeller
     grep species ${params.taxdir}/nodes.dmp | cut -f1 > genus.taxid
 
-    create-labeler.pl \
-    genus.taxid \
+    create-labeler.pl genus.taxid \
     --taxdir=${params.taxdir} \
     --level=${params.taxlevel} \
     --kingdoms=Bacteria Archaea Eukaryota \
@@ -428,6 +406,8 @@ process physeter {
     label 'process_medium'
 
     publishDir "${results}/Physeter/", mode: 'copy'
+
+    errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
 
     input:
     path(assembly)
@@ -488,11 +468,11 @@ process physeter {
     """
 }
 
-process rapport_final {
+process final_report {
 
     label 'contams'
 
-    publishDir "${results}/", mode: 'copy'
+    publishDir "${results}/", mode: 'move'
 
     input:
     path(busco_report)
@@ -502,6 +482,8 @@ process rapport_final {
     path(checkm1_report)
     path(kraken2_multi_report)
     path(physeter_multi_report)
+    path(eukcc_report)
+    path(gtdbtk_report)
 
     output:
     path("GENERA-contams.table")
@@ -545,7 +527,9 @@ workflow {
     krona(kraken2.out.krona)
     physeter(data_file)
 
-    rapport_final(busco.out, quast.out.collectFile(name: 'quast_multi.report'), checkm2.out, gunc.out.report, checkm1.out, kraken2.out.report.collectFile(name: 'kraken2_multi.report'), physeter.out.collectFile(name: 'physeter_multi.report'))
+    final_report(busco.out.report, quast.out.collectFile(name: 'quast_multi.report'), \
+    checkm2.out, gunc.out.report, checkm1.out, kraken2.out.report.collectFile(name: 'kraken2_multi.report'), \
+    physeter.out.collectFile(name: 'physeter_multi.report'), eukcc_folder.out, gtdbtk.out.report)
 }
 
 workflow.onComplete{println("Workflow execution finished")}
