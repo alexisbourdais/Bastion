@@ -128,6 +128,7 @@ process busco {
     """
 }
 
+/////   Verif modif : mv \${filename}/transposed_report.tsv \${filename}_report.tsv   /////
 process quast {
 
     label 'process_medium'
@@ -138,7 +139,7 @@ process quast {
     path(assembly)
 
     output:
-    path("${assembly.baseName}/transposed_report.tsv")
+    path("${assembly.baseName}_report.tsv")
 
     script:
 
@@ -148,6 +149,8 @@ process quast {
     filename="\${filename%.*}"
 
     quast -o \${filename} -t ${task.cpus} ${assembly}
+
+    mv \${filename}/transposed_report.tsv \${filename}_report.tsv
     """
     }
 
@@ -157,6 +160,8 @@ process quast {
     filename="\${filename%.*}"
 
     quast -o \${filename} -t ${task.cpus} --${params.mode_quast} ${assembly}
+
+    mv \${filename}/transposed_report.tsv \${filename}_report.tsv
     """
     }
 }
@@ -318,9 +323,8 @@ process checkm1 {
 }
 
 /* A TESTER
-
 //Remplacer le checkm1.results par storage/bin_stats_ext.tsv   
-grep "NomAsm" bin_stats_ext.tsv | cut -f1 -d',' => 100_FlyeAsm	{'marker lineage': 'g__Pseudomonas'
+grep "Genome" bin_stats_ext.tsv | cut -f1 -d',' => 100_FlyeAsm	{'marker lineage': 'g__Pseudomonas'
 grep "Flye" bin_stats_ext.tsv | cut -f11 -d','  => 'Completeness': 93.84585410847941
 grep "Flye" bin_stats_ext.tsv | cut -f12 -d','  => 'Contamination': 1.6551383399209487
 Manque Strain heterogeneity mais ne sert pas pour le rapport ?!
@@ -331,7 +335,7 @@ process kraken2 {
     label 'contams'
     label 'process_high'
 
-    //publishDir "${results}/Kraken/", mode: 'copy'
+    publishDir "${results}/Kraken/", mode: 'copy', pattern: '*report.txt'
 
     errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
 
@@ -467,6 +471,71 @@ process physeter {
     --auto-detect=${params.automode}
     """
 }
+
+/*  Ajouter params.annotation="False", et if true lancer subworkflow annotation+omark
+//  //  //  //  //  //  //  //  //  //  //  //  //  //  //  //  //  //  //  //  //
+
+process prodigal {
+
+conda install bioconda::prodigal
+
+name=`ls "$file" | sed "s/\.fasta//g"`
+prodigal -i ${file} -o ${results_dir}${name}.gff3 -f gff
+
+}
+
+//  //  //  //  //  //  //  //  //  //  //  //  //  //  //  //  //  //  //  //  //
+
+process gffread {
+
+conda install bioconda::gffread
+
+for file in *.gff3
+do
+name=`ls "$file" | sed "s/\.gff3//g"`
+
+#gffread -g ${fasta_dir}${name}.fasta \
+#-w ${results_gff}${name}_transcrits.fa \
+#-y ${results_gff}${name}_proteins.fa \
+#-x ${results_gff}${name}_cds.fa \
+#${file}
+
+gffread -g ${fasta_dir}${name}.fasta -y ${results_gff}${name}_proteins.fa ${file}
+
+done
+}
+
+//  //  //  //  //  //  //  //  //  //  //  //  //  //  //  //  //  //  //  //  //
+
+process omark {
+
+conda install bioconda::omark 
+
+DB_omark="/groups/bipaa/ref/OMA/LUCA.h5"
+samples_dir="${work_dir}/4-3_Proteome/"
+results_dir="${work_dir}/Omark_results/"
+
+for file in *_proteins.fa
+do
+name=`ls "$file" | sed "s/\.fa//g"`
+omamer search --db /groups/bipaa/ref/OMA/LUCA.h5 --query ${file} --out ${results_dir}/${name}.tsv --nthreads 32
+done
+
+cd ${results_dir}
+
+for file in *.tsv
+do
+name=`ls "$file" | sed "s/\.tsv//g"`
+omark -f ${file} -d ${DB_omark} -o ${results_dir}${name}
+done
+
++++ omark_plot_all_results.py
+
+}
+
+//  //  //  //  //  //  //  //  //  //  //  //  //  //  //  //  //  //  //  //  //
+*/
+
 
 process final_report {
 
