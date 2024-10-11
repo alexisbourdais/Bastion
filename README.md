@@ -18,7 +18,9 @@
 
 
 
-### Manual Set-Up
+### Set-Up
+
+==> downland image contams.sif : https://dox.uliege.be/index.php/s/fUyVuiLwJV0AkB2 & la placer dans le workdir
 
 - Busco_DB (Prokaryota+virus : 8,4G) Ok
 - CheckM1_DB (1,4Go) Ok
