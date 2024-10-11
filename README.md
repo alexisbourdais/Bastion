@@ -20,32 +20,16 @@
 
 ### Manual Set-Up
 
-- Busco DB : https://busco-data.ezlab.org/v5/data/lineages/ `busco --download prokaryota` (Prokaryota : 8,3G)
-
-- CheckM1 DB : https://data.ace.uq.edu.au/public/CheckM_databases/
-
-  or `wget https://data.ace.uq.edu.au/public/CheckM_databases/checkm_data_2015_01_16.tar.gz` (275 MB)
-
-- CheckM2 DB : `checkm2 database --download --path /custom/path/` (2.9 GB)
-
-- Eukcc2 DB : `wget http://ftp.ebi.ac.uk/pub/databases/metagenomics/eukcc/eukcc2_db_ver_1.1.tar.gz` (11 GB) -> a verif
-
-- Gunc DB : `gunc download_db /path/to/output/dir/` (13 GB)
-
-- Kraken2 DB : `wget https://genome-idx.s3.amazonaws.com/kraken/k2_pluspfp_16gb_20240605.tar.gz` (16 GB version)
-
-- Physeter DB : 
-
-- GTDBTK DB : https://ecogenomics.github.io/GTDBTk/installing/index.html
-
-  or `wget https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/auxillary_files/gtdbtk_package/full_package/gtdbtk_data.tar.gz` (106 GB)
-
-- Original singularity image : https://dox.uliege.be/index.php/s/fUyVuiLwJV0AkB2 (3.4 GB)
-
-- TaxDir : https://figshare.com/articles/software/taxdump/17124074?file=31658918
-
-  `wget https://figshare.com/ndownloader/files/32405687 -O Cornet-Baurain.tgz`  (65.46 MB)
-
+- Busco_DB (Prokaryota+virus : 8,4G) Ok
+- CheckM1_DB (1,4Go) Ok
+- CheckM2_DB (2.9 GB) OK
+- Eukcc2_DB : (11 GB) OK
+- Gunc_DB (13 GB) OK
+- Kraken2_DB : (16 Go version)
+- Physeter_DB (700Mo) Ok
+- GTDBTK_DB (102 Go) OK
+- Original singularity image : (3.4 Go)
+- Taxdir 
 ## Parameters
 
 ## Documentation
