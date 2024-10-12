@@ -16,22 +16,22 @@
 
 ## Quick start
 
+### Download contams.sif (3.4 Go) : https://dox.uliege.be/index.php/s/fUyVuiLwJV0AkB2 
 
+### Set-Up database
 
-### Set-Up
+- If you don't have any of the necessary databases, just run `nextflow run XXX.nf -profile X --workflow setup --setAll`
+- if you have some database already installed, run `nextflow run XXX.nf -profile X --workflow setup --setX --setY` where x and y correspond to the desired database. For existing databases, please specify their path with --XXX
 
-==> downland image contams.sif : https://dox.uliege.be/index.php/s/fUyVuiLwJV0AkB2 & la placer dans le workdir
-
-- Busco_DB (Prokaryota+virus : 8,4G) Ok
-- CheckM1_DB (1,4Go) Ok
-- CheckM2_DB (2.9 GB) OK
-- Eukcc2_DB : (11 GB) OK
-- Gunc_DB (13 GB) OK
+- Busco_DB (Prokaryota+virus : 8,4 Go)
+- CheckM1_DB (1,4Go)
+- CheckM2_DB (2.9 Go)
+- Eukcc2_DB : (11 Go)
+- Gunc_DB (13 Go)
 - Kraken2_DB : (16 Go version)
-- Physeter_DB (700Mo) Ok
-- GTDBTK_DB (102 Go) OK
-- Original singularity image : (3.4 Go)
-- Taxdir 
+- Physeter_DB (700 Mo)
+- GTDBTK_DB (102 Go)
+
 ## Parameters
 
 ## Documentation
