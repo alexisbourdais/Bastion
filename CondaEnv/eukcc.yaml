@@ -1,0 +1,7 @@
+name: eukcc
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - eukcc
