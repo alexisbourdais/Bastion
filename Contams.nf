@@ -72,7 +72,7 @@ def helpMessage() {
 
     Busco
     --mode_busco            [genome], proteins
-    --lineage_busco         [bacteria_odb10], fungi_odb10, auto-lineage ...
+    --lineage_busco         [auto-lineage], bacteria_odb10, fungi_odb10 ...
 
     Eukcc2
     --mode_eukcc            [DNA] ...
@@ -636,13 +636,81 @@ process physeter {
     --taxdir=${params.taxdir} \
     --taxon-list=file.idl \
     --auto-detect \
-    --kraken
+    --kraken \
+    --krona
     
     kraken-parser.pl \$filename-kraken.tsv \
     --taxdir=${params.taxdir} \
     --outfile=\$filename-parsed.report \
     --taxon-list=file.idl \
     --auto-detect=${params.automode}
+    """
+}
+
+process prodigal {
+
+    label 'process_medium'
+
+    publishDir "${results}/Annotation/", mode: 'copy'
+
+    input:
+    path(assembly)
+
+    output:
+    path("${assembly.simpleName}.gff3")
+
+    script:
+    """
+    filename=\$(basename -- "${assembly}")
+    filename="\${filename%%.*}"
+
+    prodigal -i ${assembly} -o \${filename}.gff3 -f gff
+    """
+}
+
+process gffread {
+
+    label 'process_medium'
+
+    publishDir "${results}/Annotation/", mode: 'copy'
+
+    input:
+    path(assembly)
+    path(annotation)
+
+    output:
+    path("${assembly.simpleName}_proteins.fasta")
+
+    script:
+    """
+    filename=\$(basename -- "${assembly}")
+    filename="\${filename%%.*}"
+
+    gffread -g ${assembly} -y "\${filename}_proteins.fasta" ${annotation}
+    """
+}
+
+process omark {
+
+    label 'process_medium'
+
+    publishDir "${results}/Omark/", mode: 'copy'
+
+    input:
+    path(proteins)
+
+    output:
+    path("${proteins.simpleName}_detailed_summary.txt"), emit: report
+    path("${proteins.simpleName}.sum"), emit: plot
+    path("${proteins.simpleName}.png")
+
+    script:
+    """
+    filename=\$(basename -- "${proteins}")
+    filename="\${filename%%.*}"
+
+    omamer search --db ${params.omark_db} --query ${proteins} --out \${filename}.tsv --nthreads ${task.cpus}
+    omark -f \${filename}.tsv -d ${params.omark_db} -o \${filename}
     """
 }
 
@@ -692,38 +760,38 @@ process final_report {
 
 workflow setup_wf {
 
-    if (params.setEukcc == true) {
+    if (params.setEukcc) {
         setup_Eukcc()
     }
 
-    if (params.setBusco == true) {
+    if (params.setBusco) {
         setup_Busco()
     }
-    if (params.setGtdbtk == true) {
+    if (params.setGtdbtk) {
         setup_Gtdbtk()
     }
 
-    if (params.setKraken2 == true) {
+    if (params.setKraken2) {
         setup_Kraken2()
     }
 
-    if (params.setCheckm1 == true) {
+    if (params.setCheckm1) {
         setup_Checkm1()
     }
 
-    if (params.setGunc == true) {
+    if (params.setGunc) {
         setup_Gunc()
     }
 
-    if (params.setCheckm2 == true) {
+    if (params.setCheckm2) {
         setup_Checkm2()
     }
 
-    if (params.setPhyseter == true) {
+    if (params.setPhyseter) {
         setup_Physeter()
     }
 
-    if (params.setAll == true) {
+    if (params.setAll) {
         setup_Eukcc()
         setup_Busco()
         setup_Gtdbtk()
@@ -733,6 +801,16 @@ workflow setup_wf {
         setup_Checkm2()
         setup_Physeter() 
     }
+}
+
+workflow annotation_wf {
+    take:
+    assembly
+
+    main:
+    prodigal(assembly)
+    gffread(prodigal.out)
+    omark(gffread.out)
 }
 
 workflow analysis_wf {
