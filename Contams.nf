@@ -46,6 +46,7 @@ def helpMessage() {
     --setGunc
     --setCheckm2
     --setPhyseter
+    --setOmark
 
     Database directory : automatic if installed with --workflow setup --setAll
     --db_busco          Path to database directory
@@ -56,6 +57,7 @@ def helpMessage() {
     --db_gtdbtk         Path to database directory
     --db_checkm1        Path to database directory
     --db_physeter       Path to life-tqmd-of73.dmnd
+    --db_omark
     --taxdir            Path to taxdump
 
     OPTIONAL parameter
@@ -117,7 +119,8 @@ process setup_Eukcc {
 
     label 'process_medium'
 
-    errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
+    errorStrategy { task.attempt <= 2 ? 'retry' : 'finish' }
+    maxRetries 2
 
     publishDir "${database}/", mode: 'move'
 
@@ -135,7 +138,8 @@ process setup_Checkm1 {
 
     label 'process_medium'
 
-    errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
+    errorStrategy { task.attempt <= 2 ? 'retry' : 'finish' }
+    maxRetries 2
 
     publishDir "${database}/", mode: 'move'
 
@@ -156,7 +160,8 @@ process setup_Gunc {
 
     label 'process_medium'
 
-    errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
+    errorStrategy { task.attempt <= 2 ? 'retry' : 'finish' }
+    maxRetries 2
 
     publishDir "${database}/", mode: 'move'
 
@@ -173,7 +178,8 @@ process setup_Kraken2 {
 
     label 'process_medium'
 
-    errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
+    errorStrategy { task.attempt <= 2 ? 'retry' : 'finish' }
+    maxRetries 2
 
     publishDir "${database}/", mode: 'move'
 
@@ -194,7 +200,8 @@ process setup_Gtdbtk {
 
     label 'process_medium'
 
-    errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
+    errorStrategy { task.attempt <= 2 ? 'retry' : 'finish' }
+    maxRetries 2
 
     publishDir "${database}/", mode: 'move'
 
@@ -216,7 +223,8 @@ process setup_Physeter {
     label 'contams'
     label 'process_medium'
 
-    errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
+    errorStrategy { task.attempt <= 2 ? 'retry' : 'finish' }
+    maxRetries 2
 
     publishDir "${database}/", mode: 'move'
 
@@ -246,7 +254,8 @@ process setup_Busco {
 
     label 'process_medium'
 
-    errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
+    errorStrategy { task.attempt <= 2 ? 'retry' : 'finish' }
+    maxRetries 2
 
     publishDir "${database}/", mode: 'move'
 
@@ -264,7 +273,8 @@ process setup_Checkm2 {
 
     publishDir "${database}/", mode: 'move'
 
-    errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
+    errorStrategy { task.attempt <= 2 ? 'retry' : 'finish' }
+    maxRetries 2
 
     output:
     path("checkm2_uniref100.KO.1.dmnd")
@@ -276,7 +286,24 @@ process setup_Checkm2 {
     """
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
+process setup_Omark {
+
+    publishDir "${database}/", mode: 'move'
+
+    errorStrategy { task.attempt <= 2 ? 'retry' : 'finish' }
+    maxRetries 2
+
+    output:
+    path("omark_db_LUCA.h5")
+
+    script:
+    """
+    wget https://omabrowser.org/All/LUCA.h5
+    mv LUCA.h5 omark_db_LUCA.h5
+    """
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 process busco {
 
@@ -504,6 +531,8 @@ grep "Flye" bin_stats_ext.tsv | cut -f12 -d','  => 'Contamination': 1.6551383399
 Manque Strain heterogeneity mais ne sert pas pour le rapport ?!
 */
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 process kraken2 {
 
     label 'contams'
@@ -525,7 +554,6 @@ process kraken2 {
     filename=\$(basename -- "${assembly}")
     filename="\${filename%.*}"
 
-    #Format
     inst-abbr-ids.pl ${assembly} \
     --id-regex=:DEF \
     --id-prefix=\$filename
@@ -557,26 +585,12 @@ process kraken2 {
     """
 }
 
-process krona {
+// inst-abbr-ids.pl : abrege seq name
+// inst-split-seqs.pl : split sequence en de multiple sous sequence
+// Voir create-labeler.pl
+// => probleme de taxon old/new
 
-    label 'process_low'
-
-    publishDir "${results}/Krona/", mode: 'copy'
-
-    input:
-    path(report)
-
-    output:
-    path("${report.simpleName}_krona.html")
-
-    script:
-    """
-    filename=\$(basename -- "${report}")
-    filename="\${filename%%.*}"
-
-    ktImportTaxonomy -t 5 -m 3 -o \${filename}_krona.html ${report}
-    """
-}
+// Voir le output de physeter pour krona et ajouter la liaison dans workflow
 
 process physeter {
 
@@ -647,6 +661,29 @@ process physeter {
     """
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+process krona {
+
+    label 'process_low'
+
+    publishDir "${results}/Krona/", mode: 'copy'
+
+    input:
+    path(report)
+
+    output:
+    path("${report.simpleName}_krona.html")
+
+    script:
+    """
+    filename=\$(basename -- "${report}")
+    filename="\${filename%%.*}"
+
+    ktImportTaxonomy -t 5 -m 3 -o \${filename}_krona.html ${report}
+    """
+}
+
 process prodigal {
 
     label 'process_medium'
@@ -709,11 +746,12 @@ process omark {
     filename=\$(basename -- "${proteins}")
     filename="\${filename%%.*}"
 
-    omamer search --db ${params.omark_db} --query ${proteins} --out \${filename}.tsv --nthreads ${task.cpus}
-    omark -f \${filename}.tsv -d ${params.omark_db} -o \${filename}
+    omamer search --db ${params.db_omark} --query ${proteins} --out \${filename}.tsv --nthreads ${task.cpus}
+    omark -f \${filename}.tsv -d ${params.db_omark} -o \${filename}
     """
 }
 
+// Ajouter omark report
 process final_report {
 
     label 'contams'
@@ -790,6 +828,9 @@ workflow setup_wf {
     if (params.setPhyseter) {
         setup_Physeter()
     }
+    if (params.setOmark) {
+        setup_Omark()
+    }
 
     if (params.setAll) {
         setup_Eukcc()
@@ -799,7 +840,8 @@ workflow setup_wf {
         setup_Checkm1()
         setup_Gunc()
         setup_Checkm2()
-        setup_Physeter() 
+        setup_Physeter()
+        setup_Omark() 
     }
 }
 
@@ -813,6 +855,8 @@ workflow annotation_wf {
     omark(gffread.out)
 }
 
+//ajouter annotation_wf
+//mettre gtdbtk en option
 workflow analysis_wf {
 
     data_file = Channel.fromPath("${params.assemblyFiles}")
