@@ -30,6 +30,7 @@
 - Gunc_DB (13 Go)
 - Kraken2_DB : (16 Go version)
 - Physeter_DB (700 Mo)
+- Omark (9.4 Go)
 - GTDBTK_DB (102 Go)
 
 ## Parameters
