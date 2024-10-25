@@ -108,9 +108,6 @@ if (params.help){
         exit 0
 }
 
-results = file(params.resultsDir)
-database = file(params.database)
-
 //////////////////////////////////////////////
 ////////////    Modules     //////////////////
 //////////////////////////////////////////////
@@ -179,7 +176,7 @@ workflow setup_wf {
         setup_Checkm2()
         setup_Physeter()
         //setup_Gtdbtk()
-        //setup_Omark() 
+        setup_Omark() 
     }
 }
 
@@ -203,14 +200,14 @@ workflow analysis_wf {
     eukcc_folder(data_dir)
     checkm2(data_dir)
     checkm1(data_dir)
-    kraken2(data_file)
+    kraken2(data_file, params.taxdir_kraken)
     krona(kraken2.out.krona)
-    physeter(data_file)
+    physeter(data_file, params.taxdir_physeter)
 
     if (params.annotation) {
         annotation_wf(data_file)
     }
-
+/*
     if (params.gtdbtk) {
         gtdbtk(data_dir)
     
@@ -226,7 +223,7 @@ workflow analysis_wf {
             gtdbtk.out.report
         )
     }
-    
+ /*   
     else {
         final_report(
             busco.out.report, \
@@ -239,6 +236,7 @@ workflow analysis_wf {
             eukcc_folder.out
         )
     }
+*/
 }
 
 ///////////////////////////////////////////////////////
