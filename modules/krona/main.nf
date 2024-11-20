@@ -1,3 +1,13 @@
+process setup_Krona {
+
+    label 'process_low'
+
+    script:
+    """
+    ktUpdateTaxonomy.sh
+    """
+}
+
 process krona {
 
     label 'process_low'

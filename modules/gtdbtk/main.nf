@@ -16,7 +16,9 @@ process setup_Gtdbtk {
     tar -xzf gtdbtk_data.tar.gz
     mv release*/ gtdbtk_db/
 
-    #download-db.sh not latest
+    #download-db.sh -> not latest db
+
+    conda env config vars set GTDBTK_DATA_PATH="${params.db_gtdbtk}"
     """
 }
 
@@ -37,7 +39,7 @@ process gtdbtk {
 
     script:
     """
-    #conda env config vars set GTDBTK_DATA_PATH="${params.db_gtdbtk}"
+    export GTDBTK_DATA_PATH="${params.db_gtdbtk}"
 
     gtdbtk classify_wf \
     --genome_dir ${assemblyDir} \

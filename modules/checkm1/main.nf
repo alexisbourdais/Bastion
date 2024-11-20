@@ -17,6 +17,8 @@ process setup_Checkm1 {
     wget https://data.ace.uq.edu.au/public/CheckM_databases/checkm_data_2015_01_16.tar.gz
     tar -xzf checkm_data_2015_01_16.tar.gz
     rm checkm_data_2015_01_16.tar.gz
+
+    conda env config vars set CHECKM_DATA_PATH="${params.db_checkm1}"
     """
 }
 
@@ -36,6 +38,8 @@ process checkm1 {
 
     script:
     """
+    export CHECKM_DATA_PATH="${params.db_checkm1}"
+
     newDir="GenDirCheckm1"
     mkdir "\${newDir}"
 

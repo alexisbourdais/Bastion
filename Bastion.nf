@@ -42,6 +42,7 @@ def helpMessage() {
     --setBusco
     --setGtdbtk
     --setKraken2
+    --setKrona
     --setCheckm1
     --setGunc
     --setCheckm2
@@ -122,7 +123,7 @@ include { setup_Busco; busco }          from './modules/busco'
 include { setup_Checkm2; checkm2 }      from './modules/checkm2'
 include { setup_Omark; omark }          from './modules/omark'
 include { quast }                       from './modules/quast'
-include { krona }                       from './modules/krona'
+include { setup_Krona; krona }          from './modules/krona'
 include { prodigal }                    from './modules/prodigal'
 include { gffread }                     from './modules/gffread'
 include { final_report }                from './modules/report'
@@ -148,6 +149,10 @@ workflow setup_wf {
         setup_Kraken2()
     }
 
+    if (params.setKrona) {
+        setup_Krona()
+    }
+
     if (params.setCheckm1) {
         setup_Checkm1()
     }
@@ -171,6 +176,7 @@ workflow setup_wf {
         setup_Eukcc()
         setup_Busco()
         setup_Kraken2()
+        setup_Krona()
         setup_Checkm1()
         setup_Gunc()
         setup_Checkm2()
@@ -186,7 +192,7 @@ workflow annotation_wf {
 
     main:
     prodigal(assembly)
-    gffread(prodigal.out)
+    gffread(assembly, prodigal.out)
     omark(gffread.out)
 }
 
@@ -194,20 +200,19 @@ workflow analysis_wf {
 
     data_file = Channel.fromPath("${params.assemblyFiles}")
     data_dir = Channel.fromPath("${params.assemblyDir}")
-    gunc(data_dir)
+    //gunc(data_dir)
     busco(data_dir)
-    quast(data_file)
-    eukcc_folder(data_dir)
-    checkm2(data_dir)
-    checkm1(data_dir)
-    kraken2(data_file, params.taxdir_kraken)
-    krona(kraken2.out.krona)
-    physeter(data_file, params.taxdir_physeter)
+    //quast(data_file)  OK
+    //eukcc_folder(data_dir)
+    //checkm2(data_dir)
+    //checkm1(data_dir)
+    //kraken2(data_file, params.taxdir_kraken)
+    //krona(kraken2.out.krona)
+    //physeter(data_file, params.taxdir_physeter)
 
     if (params.annotation) {
         annotation_wf(data_file)
     }
-/*
     if (params.gtdbtk) {
         gtdbtk(data_dir)
     
@@ -223,7 +228,8 @@ workflow analysis_wf {
             gtdbtk.out.report
         )
     }
- /*   
+    /*
+    Definir input optionel si gtdbtk non actif
     else {
         final_report(
             busco.out.report, \
@@ -236,7 +242,7 @@ workflow analysis_wf {
             eukcc_folder.out
         )
     }
-*/
+    */
 }
 
 ///////////////////////////////////////////////////////

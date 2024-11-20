@@ -25,7 +25,7 @@ process kraken2 {
     label 'contams'
     label 'process_high'
 
-    //publishDir "${params.resultsDir}/Kraken/", mode: 'copy'
+    publishDir "${params.resultsDir}/Kraken/", mode: 'copy'
 
     errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
 

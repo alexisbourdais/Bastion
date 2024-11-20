@@ -25,9 +25,9 @@ process omark {
     path(proteins)
 
     output:
-    path("${proteins.simpleName}_detailed_summary.txt"), emit: report
-    path("${proteins.simpleName}.sum"), emit: plot
-    path("${proteins.simpleName}.png")
+    path("${proteins.simpleName}/${proteins.simpleName}_detailed_summary.txt"), emit: report
+    path("${proteins.simpleName}/${proteins.simpleName}.sum"), emit: plot
+    path("${proteins.simpleName}/${proteins.simpleName}.png")
 
     script:
     """
