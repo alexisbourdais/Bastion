@@ -26,6 +26,60 @@ process busco {
     errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
 
     input:
+    path(assembly)
+
+    output:
+    path("${assembly.baseName}/"), emit: report
+
+    script:
+    if (params.lineage_busco=="auto-lineage") {
+        """
+        filename=\$(basename -- "${assembly}")
+        filename="\${filename%.*}"
+
+        busco --download_path ${params.db_busco} \
+        -i ${assembly} \
+        -m ${params.mode_busco} \
+        --${params.lineage_busco} \
+        -c ${task.cpus} \
+        -o \${filename}
+        """
+    }
+    else {
+        """
+        filename=\$(basename -- "${assembly}")
+        filename="\${filename%.*}"
+
+        busco --download_path ${params.db_busco} \
+        -i ${assembly} \
+        -m ${params.mode_busco} \
+        -l ${params.lineage_busco} \
+        -c ${task.cpus} \
+        -o \${filename}
+        """
+    }
+}
+
+process busco_plot {
+
+script:
+    """
+    mv Busco/*/short_summary*.txt Busco/
+
+    generate_plot.py -wd Busco
+    """
+}
+
+
+process busco_batch {
+
+    label 'process_high'
+
+    publishDir "${params.resultsDir}/", mode: 'copy'
+
+    errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
+
+    input:
     path(assemblyDir)
 
     output:
