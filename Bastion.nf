@@ -201,8 +201,8 @@ workflow analysis_wf {
     data_file = Channel.fromPath("${params.assemblyFiles}")
     data_dir = Channel.fromPath("${params.assemblyDir}")
     //gunc(data_dir)
-    busco(data_dir)
-    //quast(data_file)  OK
+    busco(data_file)
+    //quast(data_file)
     //eukcc_folder(data_dir)
     //checkm2(data_dir)
     //checkm1(data_dir)
