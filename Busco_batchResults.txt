@@ -1,7 +1,0 @@
-Input_file	Dataset	Complete	Single	Duplicated	Fragmented	Missing	n_markers	Scores_archaea_odb10	Scores_bacteria_odb10	Scores_eukaryota_odb10	Scaffold N50	Contigs N50	Percent gaps	Number of scaffolds
-140-abbr.fna	pseudomonadales_odb10	97.5	97.2	0.3	1.7	0.8	782	C:19.6%[S:19.1%,D:0.5%],F:5.2%,M:75.2%,n:194	C:100.0%[S:100.0%,D:0.0%],F:0.0%,M:0.0%,n:124	C:5.1%[S:5.1%,D:0.0%],F:2.4%,M:92.5%,n:255	6386664	6386664	0.000%	2
-166-abbr.fna	xanthomonadales_odb10	97.0	92.4	4.6	1.9	1.1	1152	C:19.1%[S:19.1%,D:0.0%],F:3.1%,M:77.8%,n:194	C:96.8%[S:95.2%,D:1.6%],F:3.2%,M:0.0%,n:124	C:3.5%[S:3.5%,D:0.0%],F:2.7%,M:93.8%,n:255	3090810	3090810	0.000%	15
-8-abbr.fna	enterobacterales_odb10	99.1	45.7	53.4	0.7	0.2	440	C:21.1%[S:10.8%,D:10.3%],F:5.2%,M:73.7%,n:194	C:99.2%[S:42.7%,D:56.5%],F:0.0%,M:0.8%,n:124	C:4.0%[S:1.6%,D:2.4%],F:2.7%,M:93.3%,n:255	4590876	4590876	0.000%	12
-291-abbr.fna	micrococcales_odb10	96.7	86.8	9.9	1.9	1.4	537	C:19.0%[S:17.5%,D:1.5%],F:3.6%,M:77.4%,n:194	C:95.9%[S:91.1%,D:4.8%],F:1.6%,M:2.5%,n:124	C:4.3%[S:3.1%,D:1.2%],F:1.2%,M:94.5%,n:255	2656863	2656863	0.000%	14
-52-abbr.fna	pseudomonadales_odb10	98.4	98.3	0.1	1.0	0.6	782	C:20.1%[S:19.6%,D:0.5%],F:4.6%,M:75.3%,n:194	C:100.0%[S:100.0%,D:0.0%],F:0.0%,M:0.0%,n:124	C:4.3%[S:3.5%,D:0.8%],F:2.4%,M:93.3%,n:255	6119001	6119001	0.000%	1
-
