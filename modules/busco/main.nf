@@ -32,7 +32,7 @@ process busco {
     path("${assembly.baseName}/"), emit: report
 
     script:
-    if (params.lineage_busco=="auto-lineage") {
+    if (params.lineage_busco=="auto-lineage*") {
         """
         filename=\$(basename -- "${assembly}")
         filename="\${filename%.*}"
@@ -43,8 +43,15 @@ process busco {
         --${params.lineage_busco} \
         -c ${task.cpus} \
         -o \${filename}
+
+        if [ -f "\${filename}/short_summary.specific.*.json" ]; then
+            python3 jsonRead.py --input "\${filename}/short_summary.specific*.json"
+        else
+            python3 jsonRead.py --input "\${filename}/short_summary.generic*.json"
+        fi
         """
     }
+    
     else {
         """
         filename=\$(basename -- "${assembly}")
@@ -56,6 +63,12 @@ process busco {
         -l ${params.lineage_busco} \
         -c ${task.cpus} \
         -o \${filename}
+
+        if [ -f "\${filename}/short_summary.specific.*.json" ]; then
+            python3 jsonRead.py --input "\${filename}/short_summary.specific*.json"
+        else
+            python3 jsonRead.py --input "\${filename}/short_summary.generic*.json"
+        fi
         """
     }
 }
@@ -69,7 +82,6 @@ script:
     generate_plot.py -wd Busco
     """
 }
-
 
 process busco_batch {
 
