@@ -17,8 +17,6 @@
 
 ## Quick start
 
-### Download contams.sif (3.4 Go) : https://dox.uliege.be/index.php/s/fUyVuiLwJV0AkB2 
-
 ### Set-Up database
 
 - If you don't have any of the necessary databases, just run `nextflow run XXX.nf -profile X --workflow setup --setAll`
