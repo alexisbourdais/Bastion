@@ -51,6 +51,8 @@
 - Gunc : https://grp-bork.embl-community.io/gunc/
 
 - Kraken2 : https://github.com/DerrickWood/kraken2/wiki
+  
+- OMArk : https://github.com/DessimozLab/OMArk
 
 - Physeter :  https://metacpan.org/dist/Bio-MUST-Apps-Physeter/view/lib/Bio/MUST/Apps/Physeter/Manual.pod
 
