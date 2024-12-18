@@ -18,15 +18,7 @@ process setup_Physeter {
     mkdir physeter_db/
     mv Cornet-2022-GBIO-Figshare/contam-labels.idl Cornet-2022-GBIO-Figshare/life-tqmd-of73.dmnd Cornet-2022-GBIO-Figshare/life-tqmd-of73.gca Cornet-2022-GBIO-Figshare/taxdump-20211206/* physeter_db/
     
-    #mkdir taxdump
-    #cd taxdump
-    #wget https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz
-    #tar -xzf taxdump.tar.gz
-    #rm taxdump.tar.gz
-    #wget https://ftp.ncbi.nlm.nih.gov/genomes/ASSEMBLY_REPORTS/assembly_summary_genbank.txt
-    #wget https://ftp.ncbi.nlm.nih.gov/genomes/ASSEMBLY_REPORTS/assembly_summary_genbank_historical.txt
-    #wget https://ftp.ncbi.nlm.nih.gov/genomes/ASSEMBLY_REPORTS/assembly_summary_refseq.txt
-    #wget https://ftp.ncbi.nlm.nih.gov/genomes/ASSEMBLY_REPORTS/assembly_summary_refseq_historical.txt
+    #setup-taxdir.pl --update-cache --taxdir=physeter_db
     """
 }
 
