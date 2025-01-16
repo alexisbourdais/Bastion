@@ -21,7 +21,7 @@ process busco {
 
     label 'process_high'
 
-    publishDir "${params.resultsDir}/", mode: 'copy'
+    publishDir "${params.resultsDir}/Busco", mode: 'copy'
 
     errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
 
@@ -29,10 +29,10 @@ process busco {
     path(assembly)
 
     output:
-    path("${assembly.baseName}/"), emit: report
+    path("${assembly.baseName}_BuscoResults.csv"), emit: report
 
     script:
-    if (params.lineage_busco=="auto-lineage" || params.lineage_busco=="auto-lineage*") {
+    if (params.lineage_busco=="auto-lineage") {
         """
         filename=\$(basename -- "${assembly}")
         filename="\${filename%.*}"
@@ -44,10 +44,10 @@ process busco {
         -c ${task.cpus} \
         -o \${filename}
 
-        if [ -f "\${filename}/short_summary.specific.*.json" ]; then
-            python3 jsonRead.py --input "\${filename}/short_summary.specific*.json"
+        if [ -f "\${filename}"/short_summary.specific.*.json ]; then
+            jsonRead.py --input "\${filename}"/short_summary.specific*.json
         else
-            python3 jsonRead.py --input "\${filename}/short_summary.generic*.json"
+            jsonRead.py --input "\${filename}"/short_summary.generic*.json
         fi
         """
     }
@@ -64,10 +64,10 @@ process busco {
         -c ${task.cpus} \
         -o \${filename}
 
-        if [ -f "\${filename}/short_summary.specific.*.json" ]; then
-            python3 jsonRead.py --input "\${filename}/short_summary.specific*.json"
+        if [ -f "\${filename}"/short_summary.specific.*.json ]; then
+            jsonRead.py --input "\${filename}"/short_summary.specific*.json
         else
-            python3 jsonRead.py --input "\${filename}/short_summary.generic*.json"
+            jsonRead.py --input "\${filename}"/short_summary.generic*.json
         fi
         """
     }
