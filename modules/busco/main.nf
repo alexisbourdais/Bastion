@@ -32,7 +32,7 @@ process busco {
     path("${assembly.baseName}/"), emit: report
 
     script:
-    if (params.lineage_busco=="auto-lineage*") {
+    if (params.lineage_busco=="auto-lineage" || params.lineage_busco=="auto-lineage*") {
         """
         filename=\$(basename -- "${assembly}")
         filename="\${filename%.*}"
