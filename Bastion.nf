@@ -84,18 +84,6 @@ def helpMessage() {
     --taxlevel              [phylum]
     --automode              [label_first]
 
-    Final report            
-    --ckcompleteness        Minimum CheckM completeness, default = 95
-    --ckcontamination       Maximum CheckM contamination, default = 5
-    --gunccss               Maximum GUNC css, default = 0.01
-    --guncrrs               Minimum GUNC rrs, default = 0.5
-    --physetercontamination Maximum Physeter contamination, default = 100 (unactivated by default)
-    --krakencontamination   Maximum Kraken contamination, default = 100 (unactivated by default)
-    --bucompleteness        Minimum BUSCO completeness, default = 0 (unactivated by default)
-    --budups                Maximum BUSCO duplication, default = 100 (unactivated by default)
-    --ck2completeness       Minimum CheckM2 completeness, default = 95
-    --ck2contamination      Maximum CheckM2 contamination, default = 5
-    --numcontigs            Maximum Number of contigs, default = 1000
 
     nextflow run Contams.nf --help
 
@@ -194,35 +182,41 @@ workflow annotation_wf {
     prodigal(assembly)
     gffread(assembly, prodigal.out)
     omark(gffread.out)
+
+    emit:
+    omark.out.report
 }
 
 workflow analysis_wf {
 
     data_file = Channel.fromPath("${params.assemblyFiles}")
     data_dir = Channel.fromPath("${params.assemblyDir}")
-    //gunc(data_dir)
-    //busco(data_file)
-    //quast(data_file)
-    //eukcc_folder(data_dir)
-    //checkm2(data_dir)
-    //checkm1(data_dir)
-    //kraken2(data_file, params.taxdir_kraken)
-    //krona(kraken2.out.krona)
-    //physeter(data_file, params.taxdir_physeter)
-      annotation_wf(data_file)
-      gtdbtk(data_dir)
-/*    
-      final_report(
-         busco.out.report, \
-         quast.out.collectFile(name: 'quast_multi.report'), \
-         checkm2.out, \
-         gunc.out.report, \
-         checkm1.out, \
-         kraken2.out.report.collectFile(name: 'kraken2_multi.report'), \
-         physeter.out.collectFile(name: 'physeter_multi.report'), \
-         eukcc_folder.out
-        )
-*/
+    gunc(data_dir)
+    busco(data_file)
+    quast(data_file)
+    eukcc_folder(data_dir)
+    checkm2(data_dir)
+    checkm1(data_dir)
+    kraken2(data_file, params.taxdir_kraken)
+    krona(kraken2.out.krona)
+    physeter(data_file, params.taxdir_physeter)
+    annotation_wf(data_file)
+    gtdbtk(data_dir)
+    //kmerfinder()
+
+    final_report(
+        busco.out.report.collectFile(name: 'busco_multi.report'), \
+        quast.out.collectFile(name: 'quast_multi.report'), \
+        checkm2.out, \
+        gunc.out.report, \
+        checkm1.out, \
+        eukcc_folder.out, \
+        gtdbtk.out
+        //annotation_wf.out
+        //kmerfinder.out
+        //kraken2.out.report.collectFile(name: 'kraken2_multi.report'), \
+        //physeter.out.collectFile(name: 'physeter_multi.report')
+    )
 }
 
 ///////////////////////////////////////////////////////
