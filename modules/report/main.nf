@@ -10,30 +10,29 @@ process final_report {
     path(checkm2_report)
     path(gunc_report)
     path(checkm1_report)
-    path(kraken2_multi_report)
-    path(physeter_multi_report)
     path(eukcc_report)
     path(gtdbtk_report)
+    //path(omark_report)
+    //path(kmerfinder_report)
+    //path(kraken2_multi_report)
+    //path(physeter_multi_report)
 
     output:
-    path("GENERA-contams.table")
-    path("positive-list.txt")
+    path("Bastion_FinalReport.tsv")
 
     script:
     """
-    contams_companion.py \
-    ${checkm1_report} \
-    --mode=table \
-    --ckcompleteness=${params.ckcompleteness} \
-    --ckcontamination=${params.ckcontamination} \
-    --gunccss=${params.gunccss} \
-    --guncrrs=${params.guncrrs} \
-    --physetercontamination=${params.physetercontamination} \
-    --krakencontamination=${params.krakencontamination} \
-    --bucompleteness=${params.bucompleteness} \
-    --budups=${params.budups} \
-    --numcontigs=${params.numcontigs} \
-    --ck2completeness=${params.ck2completeness} \
-    --ck2contamination=${params.ck2contamination}
+    bastion_companion.py \
+    --busco ${busco_report} \
+    --quast ${quast_report_multi} \
+    --checkm2 ${checkm2_report} \
+    --gunc ${gunc_report} \
+    --checkm1 ${checkm1_report} \
+    --eukcc ${eukcc_report} \
+    --gtdbtk ${gtdbtk_report}
+    #--omark ${omark_report} \
+    #--kmerfinder ${kmerfinder_report} \
+    #--physeter ${params} \
+    #--kraken ${params}
     """
 }
