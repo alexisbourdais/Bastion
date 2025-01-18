@@ -26,7 +26,7 @@ process final_report {
     script:
     """
     bastion_companion.py \
-    --busco ${busco_report} \
+    --busco ${busco_report_multi} \
     --quast ${quast_report_multi} \
     --checkm2 ${checkm2_report} \
     --gunc ${gunc_report} \
