@@ -35,7 +35,7 @@ process gtdbtk {
 
     output:
     path("Gtdbtk/gtdbtk.bac120.summary.tsv"), emit: report
-    path("Gtdbtk/identify")
+    //path("Gtdbtk/identify")
 
     script:
     """
@@ -45,6 +45,7 @@ process gtdbtk {
     --genome_dir ${assemblyDir} \
     --out_dir "Gtdbtk" \
     --cpus ${task.cpus} \
-    --extension ${params.format}
+    --extension ${params.format} \
+    --mash_db "Gtdbtk"
     """
 }
