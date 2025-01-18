@@ -29,7 +29,7 @@ process busco {
     path(assembly)
 
     output:
-    path("${assembly.baseName}_BuscoResults.csv")
+    path("${assembly.baseName}_BuscoResults.csv"), emit : report
 
     script:
     if (params.lineage_busco=="auto-lineage" || params.lineage_busco=="auto-lineage*") {
