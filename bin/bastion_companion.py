@@ -16,18 +16,18 @@ ap.add_argument("--eukcc", required=True)
 ap.add_argument("--gunc", required=True)
 ap.add_argument("--checkm1", required=True)
 ap.add_argument("--checkm2", required=True)
-ap.add_argument("--omark", required=False)
-ap.add_argument("--kmerfinder", required=False)
-ap.add_argument("--gtdbtk", required=False)
-ap.add_argument("--physeter", required=False)
-ap.add_argument("--kraken", required=False)
+ap.add_argument("--omark", default='', required=False)
+ap.add_argument("--kmerfinder", default='', required=False)
+ap.add_argument("--gtdbtk", default='', required=False)
+ap.add_argument("--physeter", default='', required=False)
+ap.add_argument("--kraken", default='', required=False)
 
 args = vars(ap.parse_args())
 
 #################
 ### Variables ###
 #################
-genome_list = ()
+genome_list = []
 
 checkm1_complet_dic = {}
 checkm1_contam_dic = {}
@@ -221,7 +221,7 @@ if os.path.isfile(args['kmerfinder']):
         pass
 
 ### Results
-results_file="Bastion_FinalReport.tsv"
+results_file=open("Bastion_FinalReport.tsv", "a")
 print("Genome\t\
       Checkm_completeness\tCheckm_contamination\tCheckm_str\t\
       Busco_placemenent\tBusco_completeness\tBusco_duplicate\t\
