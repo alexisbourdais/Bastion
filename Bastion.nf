@@ -6,9 +6,9 @@
  https://github.com/Lcornet/GENERA
  
  ---------------------------------------------------------------
- Contams Analysis Pipeline. Started September 2024.
+ Bastion Pipeline. Started September 2024.
  #### Homepage / Documentation
- https://github.com/alexisbourdais/
+ https://github.com/alexisbourdais/Bastion/
  #### Authors
  Alexis Bourdais
 ---------------------------------------------------------------
@@ -21,11 +21,7 @@
 def helpMessage() {
     log.info """
 
-    ------------------------------------------------------------------------------------
-    >>>>>   Edit conda, singularity and database path in config file before using  <<<<<
-    ------------------------------------------------------------------------------------
-
-    Command : nextflow run Contams.nf -profile slurm,conda [option]
+    Command : nextflow run Bastion.nf -profile slurm,singularity [option]
 
     REQUIRED parameter
 
@@ -58,7 +54,7 @@ def helpMessage() {
     --db_gtdbtk         Path to database directory
     --db_checkm1        Path to database directory
     --db_physeter       Path to life-tqmd-of73.dmnd
-    --db_omark
+    --db_omark          Path to database directory
     --taxdir            Path to taxdump
 
     OPTIONAL parameter
@@ -85,7 +81,7 @@ def helpMessage() {
     --automode              [label_first]
 
 
-    nextflow run Contams.nf --help
+    nextflow run Bastion.nf --help
 
     """.stripIndent()
 }
@@ -115,6 +111,7 @@ include { setup_Krona; krona }          from './modules/krona'
 include { prodigal }                    from './modules/prodigal'
 include { gffread }                     from './modules/gffread'
 include { final_report }                from './modules/report'
+//include {setup_Kmerfinder, kmerfinder}  from './modules/kmerfinder'
 
 ///////////////////////////////////////////////////////////
 //////////////////     Sub-Workflow     ///////////////////
@@ -180,7 +177,7 @@ workflow annotation_wf {
 
     main:
     prodigal(assembly)
-    gffread(assembly, prodigal.out)
+    gffread(prodigal.out)
     omark(gffread.out)
 
     emit:
@@ -197,9 +194,9 @@ workflow analysis_wf {
     eukcc_folder(data_dir)
     checkm2(data_dir)
     checkm1(data_dir)
-    kraken2(data_file, params.taxdir_kraken)
-    krona(kraken2.out.krona)
-    physeter(data_file, params.taxdir_physeter)
+    //kraken2(data_file, params.taxdir_kraken)
+    //krona(kraken2.out.krona)
+    //physeter(data_file, params.taxdir_physeter)
     annotation_wf(data_file)
     gtdbtk(data_dir)
     //kmerfinder()
@@ -212,7 +209,7 @@ workflow analysis_wf {
         checkm1.out, \
         eukcc_folder.out, \
         gtdbtk.out
-        //annotation_wf.out
+        //annotation_wf.out.collectFile(name: 'omark_multi.report')
         //kmerfinder.out
         //kraken2.out.report.collectFile(name: 'kraken2_multi.report'), \
         //physeter.out.collectFile(name: 'physeter_multi.report')

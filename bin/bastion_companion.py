@@ -180,7 +180,7 @@ if os.path.isfile(args['gtdbtk']):
             gtdbtk_placement_dic[genome_id] = placement
             gtdbtk_reference_dic[genome_id] = reference
 
-#Omark
+#Omark TO DO
 if os.path.isfile(args['omark']):
     omark = csv.reader(open(args['omark'], "r"), delimiter='\t')
     for line in omark:
@@ -204,7 +204,7 @@ if os.path.isfile(args['physeter']):
         physeter_contam_dic[genome_id] = contam
         physeter_placement_dic[genome_id] = placement
 
-#Kraken
+#Kraken TO DO
 if os.path.isfile(args['kraken']):
     kraken = csv.reader(open(args['kraken'], "r"), delimiter='\t')
     for line in kraken:
@@ -214,7 +214,7 @@ if os.path.isfile(args['kraken']):
         kraken_contam_dic[genome_id] = contam
         kraken_placement_dic[genome_id] = placement       
 
-#Kmerfinder
+#Kmerfinder TO DO
 if os.path.isfile(args['kmerfinder']):
     kmerfinder = csv.reader(open(args['kmerfinder'], "r"), delimiter='\t')
     for line in kmerfinder:

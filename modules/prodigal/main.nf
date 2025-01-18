@@ -8,6 +8,7 @@ process prodigal {
     path(assembly)
 
     output:
+    path(assembly)
     path("${assembly.simpleName}.gff3")
 
     script:
