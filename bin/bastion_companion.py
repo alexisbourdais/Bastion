@@ -223,15 +223,15 @@ if os.path.isfile(args['kmerfinder']):
 ### Results
 results_file=open("Bastion_FinalReport.tsv", "a")
 print("Genome\t\
-      Checkm_completeness\tCheckm_contamination\tCheckm_str\t\
-      Busco_placemenent\tBusco_completeness\tBusco_duplicate\t\
-      GUNC_CSS\tGUNC_RRS\tGUNC_status\tGUNC_conta\t\
-      Physeter_placement\tPhyseter_contamination\t\
-      Kraken_placement\tKraken_contamination\t\
-      Checkm2_completeness\tCheckm2_contamination\t\
-      Gtdbtk_placement\tGtdbtk_reference\t\
-      Eukcc2_contamination\tEukcc2_completeness\t\
-      quast_#contigs\tquast_tot_length\tquast_GC\tquast_N50", file=results_file)
+Checkm_completeness\tCheckm_contamination\tCheckm_str\t\
+Busco_placemenent\tBusco_completeness\tBusco_duplicate\t\
+GUNC_CSS\tGUNC_RRS\tGUNC_status\tGUNC_conta\t\
+Physeter_placement\tPhyseter_contamination\t\
+Kraken_placement\tKraken_contamination\t\
+Checkm2_completeness\tCheckm2_contamination\t\
+Gtdbtk_placement\tGtdbtk_reference\t\
+Eukcc2_contamination\tEukcc2_completeness\t\
+quast_#contigs\tquast_tot_length\tquast_GC\tquast_N50", file=results_file)
 
 for genome in genome_list:
     checkm1_complet=checkm1_complet_dic.get(genome)
@@ -273,13 +273,13 @@ for genome in genome_list:
     kraken_contam=kraken_contam_dic.get(genome)
     kraken_placement=kraken_placement_dic.get(genome)
 
-    print(f"Genome\t\
-        {checkm1_complet}\t{checkm1_contam}\t{checkm1_str}\t\
-        {busco_placement}\t{busco_complet}\t{busco_duplicated}\t\
-        {gunc_css}\t{gunc_RRS}\t{gunc_status}\t{gunc_contam}\t\
-        {physeter_placement}\t{physeter_contam}\t\
-        {kraken_placement}\t{kraken_contam}\t\
-        {checkm2_complet}\t{checkm2_contam}\t\
-        {gtdbtk_placement}\t{gtdbtk_reference}\t\
-        {eukcc_contam}\t{eukcc_complet}\t\
-        {quast_contig}\t{quast_length}\t{quast_gc}\t{quast_n50}", file=results_file)
+    print(f"{genome}\t\
+{checkm1_complet}\t{checkm1_contam}\t{checkm1_str}\t\
+{busco_placement}\t{busco_complet}\t{busco_duplicated}\t\
+{gunc_css}\t{gunc_RRS}\t{gunc_status}\t{gunc_contam}\t\
+{physeter_placement}\t{physeter_contam}\t\
+{kraken_placement}\t{kraken_contam}\t\
+{checkm2_complet}\t{checkm2_contam}\t\
+{gtdbtk_placement}\t{gtdbtk_reference}\t\
+{eukcc_contam}\t{eukcc_complet}\t\
+{quast_contig}\t{quast_length}\t{quast_gc}\t{quast_n50}", file=results_file)
