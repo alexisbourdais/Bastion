@@ -201,7 +201,7 @@ workflow analysis_wf {
     data_file = Channel.fromPath("${params.assemblyFiles}")
     data_dir = Channel.fromPath("${params.assemblyDir}")
     //gunc(data_dir)
-    busco(data_file)
+    //busco(data_file)
     //quast(data_file)
     //eukcc_folder(data_dir)
     //checkm2(data_dir)
@@ -209,40 +209,20 @@ workflow analysis_wf {
     //kraken2(data_file, params.taxdir_kraken)
     //krona(kraken2.out.krona)
     //physeter(data_file, params.taxdir_physeter)
-
-    if (params.annotation) {
-        annotation_wf(data_file)
-    }
-    if (params.gtdbtk) {
-        gtdbtk(data_dir)
-    
-        final_report(
-            busco.out.report, \
-            quast.out.collectFile(name: 'quast_multi.report'), \
-            checkm2.out, \
-            gunc.out.report, \
-            checkm1.out, \
-            kraken2.out.report.collectFile(name: 'kraken2_multi.report'), \
-            physeter.out.collectFile(name: 'physeter_multi.report'), \
-            eukcc_folder.out, \
-            gtdbtk.out.report
+      annotation_wf(data_file)
+      gtdbtk(data_dir)
+/*    
+      final_report(
+         busco.out.report, \
+         quast.out.collectFile(name: 'quast_multi.report'), \
+         checkm2.out, \
+         gunc.out.report, \
+         checkm1.out, \
+         kraken2.out.report.collectFile(name: 'kraken2_multi.report'), \
+         physeter.out.collectFile(name: 'physeter_multi.report'), \
+         eukcc_folder.out
         )
-    }
-    /*
-    Definir input optionel si gtdbtk non actif
-    else {
-        final_report(
-            busco.out.report, \
-            quast.out.collectFile(name: 'quast_multi.report'), \
-            checkm2.out, \
-            gunc.out.report, \
-            checkm1.out, \
-            kraken2.out.report.collectFile(name: 'kraken2_multi.report'), \
-            physeter.out.collectFile(name: 'physeter_multi.report'), \
-            eukcc_folder.out
-        )
-    }
-    */
+*/
 }
 
 ///////////////////////////////////////////////////////
