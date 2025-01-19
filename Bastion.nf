@@ -97,21 +97,21 @@ if (params.help){
 ////////////    Modules     //////////////////
 //////////////////////////////////////////////
 
-include { setup_Eukcc; eukcc_folder }   from './modules/eukcc'
-include { setup_Checkm1; checkm1 }      from './modules/checkm1'
-include { setup_Gunc; gunc }            from './modules/gunc'
-include { setup_Kraken2; kraken2 }      from './modules/kraken2'
-include { setup_Gtdbtk; gtdbtk }        from './modules/gtdbtk'
-include { setup_Physeter; physeter }    from './modules/physeter'
-include { setup_Busco; busco }          from './modules/busco'
-include { setup_Checkm2; checkm2 }      from './modules/checkm2'
-include { setup_Omark; omark }          from './modules/omark'
-include { quast }                       from './modules/quast'
-include { setup_Krona; krona }          from './modules/krona'
-include { prodigal }                    from './modules/prodigal'
-include { gffread }                     from './modules/gffread'
-include { final_report }                from './modules/report'
-//include {setup_Kmerfinder, kmerfinder}  from './modules/kmerfinder'
+include { setup_Eukcc; eukcc_folder }       from './modules/eukcc'
+include { setup_Checkm1; checkm1 }          from './modules/checkm1'
+include { setup_Gunc; gunc }                from './modules/gunc'
+include { setup_Kraken2; kraken2 }          from './modules/kraken2'
+include { setup_Gtdbtk; gtdbtk }            from './modules/gtdbtk'
+include { setup_Physeter; physeter }        from './modules/physeter'
+include { setup_Busco; busco; busco_plot }  from './modules/busco'
+include { setup_Checkm2; checkm2 }          from './modules/checkm2'
+include { setup_Omark; omark }              from './modules/omark'
+include { quast }                           from './modules/quast'
+include { setup_Krona; krona }              from './modules/krona'
+include { prodigal }                        from './modules/prodigal'
+include { gffread }                         from './modules/gffread'
+include { final_report }                    from './modules/report'
+include {setup_Kmerfinder, kmerfinder}      from './modules/kmerfinder'
 
 ///////////////////////////////////////////////////////////
 //////////////////     Sub-Workflow     ///////////////////
@@ -153,8 +153,13 @@ workflow setup_wf {
     if (params.setPhyseter) {
         setup_Physeter()
     }
+
     if (params.setOmark) {
         setup_Omark()
+    }
+
+    if (params.setKmerfinder) {
+        setup_Kmerfinder()
     }
 
     if (params.setAll) {
@@ -168,6 +173,7 @@ workflow setup_wf {
         setup_Physeter()
         //setup_Gtdbtk()
         setup_Omark() 
+        setup_Kmerfinder()
     }
 }
 
@@ -188,19 +194,20 @@ workflow analysis_wf {
 
     data_file = Channel.fromPath("${params.assemblyFiles}")
     data_dir = Channel.fromPath("${params.assemblyDir}")
-    gunc(data_dir)
-    busco(data_file)
-    quast(data_file)
-    eukcc_folder(data_dir)
-    checkm2(data_dir)
-    checkm1(data_dir)
-    //kraken2(data_file, params.taxdir_kraken)
+    //gunc(data_dir)
+    //busco(data_file)
+    //busco_plot(busco.out.plot.collect())
+    //quast(data_file)
+    //eukcc_folder(data_dir)
+    //checkm2(data_dir)
+    //checkm1(data_dir)
+    //kraken2(data_file)
     //krona(kraken2.out.krona)
     //physeter(data_file, params.taxdir_physeter)
-    annotation_wf(data_file)
-    gtdbtk(data_dir)
+    //annotation_wf(data_file)
+    //gtdbtk(data_dir)
     //kmerfinder()
-
+/*
     final_report(
         busco.out.report.collectFile(name: 'busco_multi.report'), \
         quast.out.collectFile(name: 'quast_multi.report'), \
@@ -214,6 +221,7 @@ workflow analysis_wf {
         //kraken2.out.report.collectFile(name: 'kraken2_multi.report'), \
         //physeter.out.collectFile(name: 'physeter_multi.report')
     )
+*/    
 }
 
 ///////////////////////////////////////////////////////
