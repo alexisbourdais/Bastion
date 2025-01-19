@@ -30,6 +30,7 @@ process busco {
 
     output:
     path("${assembly.baseName}_BuscoResults.csv"), emit : report
+    path("short_summary.*.txt"), emit : plot
 
     script:
     if (params.lineage_busco=="auto-lineage" || params.lineage_busco=="auto-lineage*") {
@@ -45,9 +46,11 @@ process busco {
         -o \${filename}
 
         if [ -f "\${filename}"/short_summary.specific.*.json ]; then
-            jsonRead.py --input "\${filename}"/short_summary.specific*.json
+            jsonRead.py --input "\${filename}"/short_summary.specific.*.json
+            mv "\${filename}"/short_summary.specific.*.txt ./
         else
-            jsonRead.py --input "\${filename}"/short_summary.generic*.json
+            jsonRead.py --input "\${filename}"/short_summary.generic.*.json
+            mv "\${filename}"/short_summary.generic.*.txt ./
         fi
         """
     }
@@ -66,8 +69,10 @@ process busco {
 
         if [ -f "\${filename}"/short_summary.specific.*.json ]; then
             jsonRead.py --input "\${filename}"/short_summary.specific*.json
+            mv "\${filename}"/short_summary.specific.*.txt ./
         else
             jsonRead.py --input "\${filename}"/short_summary.generic*.json
+            mv "\${filename}"/short_summary.generic.*.txt ./
         fi
         """
     }
@@ -75,56 +80,24 @@ process busco {
 
 process busco_plot {
 
-script:
-    """
-    mv Busco/*/short_summary*.txt Busco/
+    label 'process_low'
 
-    generate_plot.py -wd Busco
-    """
-}
-
-process busco_batch {
-
-    label 'process_high'
-
-    publishDir "${params.resultsDir}/", mode: 'copy'
+    publishDir "${params.resultsDir}/Busco", mode: 'copy'
 
     errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
 
     input:
-    path(assemblyDir)
+    path(short_summary_multi)
 
     output:
-    path("Busco/batch_summary.txt"), emit: report
-    path("Busco/busco_figure.png")
+    path("busco_figure.png"), emit : report
 
     script:
-    if (params.lineage_busco=="auto-lineage") {
         """
-        busco --download_path ${params.db_busco} \
-        -i ${assemblyDir} \
-        -m ${params.mode_busco} \
-        --${params.lineage_busco} \
-        -c ${task.cpus} \
-        -o Busco
+        mkdir short_summary_dir
+        mv ${short_summary_multi} ./short_summary_dir/
 
-        mv Busco/*/short_summary*.txt Busco/
-
-        generate_plot.py -wd Busco
+        generate_plot.py -wd ./short_summary_dir/
+        mv ./short_summary_dir/busco_figure.png ./
         """
-    }
-    else {
-        """
-        busco --download_path ${params.db_busco} \
-        -i ${assemblyDir} \
-        -m ${params.mode_busco} \
-        -l ${params.lineage_busco} \
-        -c ${task.cpus} \
-        -o Busco
-
-        mv Busco/*/short_summary*.txt Busco/
-
-        generate_plot.py -wd Busco
-        """
-    }
 }
