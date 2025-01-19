@@ -90,7 +90,7 @@ process busco_plot {
     path(short_summary_multi)
 
     output:
-    path("busco_figure.png"), emit : report
+    path("busco_figure.png")
 
     script:
         """

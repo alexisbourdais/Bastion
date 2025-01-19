@@ -1,6 +1,5 @@
 process setup_Physeter {
 
-    label 'contams'
     label 'process_medium'
 
     errorStrategy { task.attempt <= 2 ? 'retry' : 'finish' }
@@ -24,7 +23,6 @@ process setup_Physeter {
 
 process physeter {
 
-    label 'contams'
     label 'process_medium'
 
     publishDir "${params.resultsDir}/Physeter/", mode: 'copy'

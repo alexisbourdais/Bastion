@@ -26,8 +26,8 @@ process omark {
 
     output:
     path("${proteins.simpleName}/${proteins.simpleName}_detailed_summary.txt"), emit: report
-    path("${proteins.simpleName}/${proteins.simpleName}.sum"), emit: plot
-    path("${proteins.simpleName}/${proteins.simpleName}.png")
+    path("${proteins.simpleName}/"), emit: plot
+    //path("${proteins.simpleName}/${proteins.simpleName}.png")
 
     script:
     """
@@ -36,5 +36,27 @@ process omark {
 
     omamer search --db ${params.db_omark} --query ${proteins} --out \${filename}.tsv --nthreads ${task.cpus}
     omark -f \${filename}.tsv -d ${params.db_omark} -o \${filename}
+    """
+}
+
+process omark_plot {
+
+    label 'process_low'
+
+    publishDir "${params.resultsDir}/Omark/", mode: 'copy'
+
+    input:
+    path(omark_results_multi)
+
+    output:
+    path("omark_multiple.png")
+
+    script:
+    """
+
+    mkdir omark_results_dir
+    mv ${omark_results_multi} ./omark_results_dir/
+
+    omark_plot_all_results.py --input ./omark_results_dir/
     """
 }
