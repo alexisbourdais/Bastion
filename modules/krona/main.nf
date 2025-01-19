@@ -2,9 +2,16 @@ process setup_Krona {
 
     label 'process_low'
 
+    publishDir "${params.database}/", mode: 'move'
+
+    output:
+    path("Krona_db/")
+
     script:
     """
-    ktUpdateTaxonomy.sh
+    mkdir Krona_db
+    cd Krona_db
+    ktUpdateTaxonomy.sh ./
     """
 }
 
@@ -25,6 +32,6 @@ process krona {
     filename=\$(basename -- "${report}")
     filename="\${filename%%.*}"
 
-    ktImportTaxonomy -t 5 -m 3 -o \${filename}_krona.html ${report}
+    ktImportTaxonomy -tax "${params.db_krona}" -t 5 -m 3 -o \${filename}_krona.html ${report}
     """
 }

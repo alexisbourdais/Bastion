@@ -22,6 +22,34 @@ process setup_Kraken2 {
 
 process kraken2 {
 
+    label 'process_high'
+
+    publishDir "${params.resultsDir}/Kraken/", mode: 'copy'
+
+    errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
+
+    input:
+    path(assembly)
+
+    output:
+    path("${assembly.baseName}.report.txt"), emit: krona
+
+    script:
+    """
+    filename=\$(basename -- "${assembly}")
+    filename="\${filename%.*}"
+
+    kraken2 \
+    --use-names ${assembly} \
+    --db ${params.db_kraken2} \
+    --threads ${task.cpus} \
+    --report "\${filename}.report.txt" \
+    --output "\${filename}.out"
+    """
+}
+
+process kraken2_genera {
+
     label 'contams'
     label 'process_high'
 
