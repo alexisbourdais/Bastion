@@ -28,7 +28,7 @@ process kmerfinder {
 
     script:
     """
-    filename=\$(basename -- "${report}")
+    filename=\$(basename -- "${assembly}")
     filename="\${filename%%.*}"
 
     kmerfinder.py -i ${assembly} -o \${filename} -db ${params.db_kmerfinder}
