@@ -105,13 +105,13 @@ include { setup_Gtdbtk; gtdbtk }            from './modules/gtdbtk'
 include { setup_Physeter; physeter }        from './modules/physeter'
 include { setup_Busco; busco; busco_plot }  from './modules/busco'
 include { setup_Checkm2; checkm2 }          from './modules/checkm2'
-include { setup_Omark; omark }              from './modules/omark'
+include { setup_Omark; omark; omark_plot }  from './modules/omark'
 include { quast }                           from './modules/quast'
 include { setup_Krona; krona }              from './modules/krona'
 include { prodigal }                        from './modules/prodigal'
 include { gffread }                         from './modules/gffread'
 include { final_report }                    from './modules/report'
-include {setup_Kmerfinder, kmerfinder}      from './modules/kmerfinder'
+include { setup_Kmerfinder; kmerfinder }    from './modules/kmerfinder'
 
 ///////////////////////////////////////////////////////////
 //////////////////     Sub-Workflow     ///////////////////
@@ -185,6 +185,7 @@ workflow annotation_wf {
     prodigal(assembly)
     gffread(prodigal.out)
     omark(gffread.out)
+    omark_plot(omark.out.plot.collect())
 
     emit:
     omark.out.report
@@ -201,12 +202,12 @@ workflow analysis_wf {
     //eukcc_folder(data_dir)
     //checkm2(data_dir)
     //checkm1(data_dir)
-    //kraken2(data_file)
-    //krona(kraken2.out.krona)
-    //physeter(data_file, params.taxdir_physeter)
+    kraken2(data_file)
+    krona(kraken2.out.krona)
+    physeter(data_file, params.taxdir_physeter)
     //annotation_wf(data_file)
     //gtdbtk(data_dir)
-    //kmerfinder()
+    //kmerfinder(data_file)
 /*
     final_report(
         busco.out.report.collectFile(name: 'busco_multi.report'), \
