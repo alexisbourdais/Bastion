@@ -1,6 +1,6 @@
 process setup_Kmerfinder {
 
-    label 'process_low'
+    label 'process_medium'
 
     publishDir "${params.database}/", mode: 'move'
 
@@ -16,7 +16,7 @@ process setup_Kmerfinder {
 
 process kmerfinder {
 
-    label 'process_low'
+    label 'process_medium'
 
     publishDir "${params.resultsDir}/Kmerfinder/", mode: 'copy'
 
@@ -31,6 +31,6 @@ process kmerfinder {
     filename=\$(basename -- "${assembly}")
     filename="\${filename%%.*}"
 
-    kmerfinder.py -i ${assembly} -o \${filename} -db ${params.db_kmerfinder}
+    kmerfinder.py -i ${assembly} -o \${filename} -db "${params.db_kmerfinder}${params.taxon_kmerfinder}/${params.taxon_kmerfinder}.ATG" -tax "${params.db_kmerfinder}${params.taxon_kmerfinder}/${params.taxon_kmerfinder}.tax" -x
     """
 }
