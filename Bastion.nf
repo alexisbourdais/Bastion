@@ -27,10 +27,12 @@ def helpMessage() {
 
     -profile [standard]/slurm,      Select profile standard (local) or slurm. Default: standard          
              singularity/conda      Select profile singularity or conda. 
-                                    Physeter/Kraken/Report need singularity in both case.
+                                    Physeter need singularity in both case.
     
-    --workflow           Select workflow :  'setup' to download database
-                                            'analysis' to run all analyses
+    --workflow                      Select workflow :  'setup' to download database
+                                                       'analysis' to run all analyses
+
+    -resume                         used to resume a workflow from where it was previously stopped or interrupted
 
     Choose which database you want to set-up when using --workflow setup
     --setAll
@@ -44,18 +46,21 @@ def helpMessage() {
     --setCheckm2
     --setPhyseter
     --setOmark
+    --setKmerfinder
 
-    Database directory : automatic if installed with --workflow setup --setAll
+    Database directory : automatic if installed with --workflow setup
     --db_busco          Path to database directory
     --db_checkm2        Path to checkm2_uniref100.KO.1.dmnd
     --db_eukcc          Path to database directory
     --db_gunc           Path to gunc_db_progenomes2.1.dmnd
     --db_kraken2        Path to database directory
+    --db_krona          Path to database directory
     --db_gtdbtk         Path to database directory
     --db_checkm1        Path to database directory
-    --db_physeter       Path to life-tqmd-of73.dmnd
     --db_omark          Path to database directory
-    --taxdir            Path to taxdump
+    --db_physeter       Path to life-tqmd-of73.dmnd
+    --taxdir_physeter   Path to physeter_db
+    --db_kmerfinder     Path to database directory
 
     OPTIONAL parameter
     
@@ -76,9 +81,12 @@ def helpMessage() {
     Eukcc2
     --mode_eukcc            [DNA] ...
 
-    Physeter/Kraken
+    Physeter
     --taxlevel              [phylum]
     --automode              [label_first]
+
+    Kmerfinder
+    --taxon_kmerfinder      [bacteria], archae, fungi, protozoa
 
 
     nextflow run Bastion.nf --help
@@ -171,9 +179,9 @@ workflow setup_wf {
         setup_Gunc()
         setup_Checkm2()
         setup_Physeter()
-        //setup_Gtdbtk()
         setup_Omark() 
         setup_Kmerfinder()
+        setup_Gtdbtk()
     }
 }
 
@@ -195,20 +203,20 @@ workflow analysis_wf {
 
     data_file = Channel.fromPath("${params.assemblyFiles}")
     data_dir = Channel.fromPath("${params.assemblyDir}")
-    //gunc(data_dir)
-    //busco(data_file)
-    //busco_plot(busco.out.plot.collect())
-    //quast(data_file)
-    //eukcc_folder(data_dir)
-    //checkm2(data_dir)
-    //checkm1(data_dir)
-    //kraken2(data_file)
-    //krona(kraken2.out.krona)
-    physeter(data_file, params.taxdir_physeter)
-    //annotation_wf(data_file)
-    //gtdbtk(data_dir)
+    gunc(data_dir)
+    busco(data_file)
+    busco_plot(busco.out.plot.collect())
+    quast(data_file)
+    eukcc_folder(data_dir)
+    checkm2(data_dir)
+    checkm1(data_dir)
+    annotation_wf(data_file)
+    gtdbtk(data_dir)
     kmerfinder(data_file)
-/*
+    kraken2(data_file)
+    krona(kraken2.out.krona)
+    physeter(data_file, params.taxdir_physeter)
+
     final_report(
         busco.out.report.collectFile(name: 'busco_multi.report'), \
         quast.out.collectFile(name: 'quast_multi.report'), \
@@ -216,13 +224,12 @@ workflow analysis_wf {
         gunc.out.report, \
         checkm1.out, \
         eukcc_folder.out, \
-        gtdbtk.out
+        gtdbtk.out, \
+        physeter.out.collectFile(name: 'physeter_multi.report')
         //annotation_wf.out.collectFile(name: 'omark_multi.report')
         //kmerfinder.out
-        //kraken2.out.report.collectFile(name: 'kraken2_multi.report'), \
-        //physeter.out.collectFile(name: 'physeter_multi.report')
+        //kraken2.out.report.collectFile(name: 'kraken2_multi.report')
     )
-*/    
 }
 
 ///////////////////////////////////////////////////////
