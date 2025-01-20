@@ -202,12 +202,12 @@ workflow analysis_wf {
     //eukcc_folder(data_dir)
     //checkm2(data_dir)
     //checkm1(data_dir)
-    kraken2(data_file)
-    krona(kraken2.out.krona)
+    //kraken2(data_file)
+    //krona(kraken2.out.krona)
     physeter(data_file, params.taxdir_physeter)
     //annotation_wf(data_file)
     //gtdbtk(data_dir)
-    //kmerfinder(data_file)
+    kmerfinder(data_file)
 /*
     final_report(
         busco.out.report.collectFile(name: 'busco_multi.report'), \
