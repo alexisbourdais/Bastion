@@ -1,11 +1,6 @@
 #!  /usr/bin/bash
 
-### Genouest
-
 nextflow run Bastion.nf \
--profile standard,singularity \
+-profile slurm,singularity \
 --workflow analysis \
 --singularity "-B /home:/home"
-
-#--workflow analysis \
-#--workflow setup \
