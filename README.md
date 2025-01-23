@@ -81,7 +81,7 @@ nextflow run Bastion.nf --help
     --db_checkm1        Path to database directory
     --db_omark          Path to database directory
     --db_physeter       Path to life-tqmd-of73.dmnd
-    --taxdir_physeter   Path to physeter_db
+    --taxdir            Path to taxdump
     --db_kmerfinder     Path to database directory
 
     OPTIONAL parameter
