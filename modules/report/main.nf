@@ -20,7 +20,7 @@ process final_report {
 
     script:
     """
-    bastion_companion.py \
+    report.py \
     --busco ${busco_report_multi} \
     --quast ${quast_report_multi} \
     --checkm2 ${checkm2_report} \
@@ -31,6 +31,3 @@ process final_report {
     --physeter ${physeter_multi_report}
     """
 }
-//--omark ${omark_report_multi} \
-//--kmerfinder ${kmerfinder_report} \
-//--kraken ${kraken2_multi_report}
