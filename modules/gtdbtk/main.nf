@@ -35,7 +35,6 @@ process gtdbtk {
 
     output:
     path("Gtdbtk/gtdbtk.bac120.summary.tsv"), emit: report
-    //path("Gtdbtk/identify")
 
     script:
     """

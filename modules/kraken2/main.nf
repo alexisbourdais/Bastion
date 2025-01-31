@@ -29,74 +29,44 @@ process kraken2 {
     errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
 
     input:
-    path(assembly)
+    tuple val(name), path(assembly_split)
 
     output:
-    path("${assembly.baseName}.report.txt"), emit: krona
+    path("${name}-split.report.txt")
 
     script:
     """
-    filename=\$(basename -- "${assembly}")
-    filename="\${filename%.*}"
-
     kraken2 \
-    --use-names ${assembly} \
+    --use-names ${assembly_split} \
     --db ${params.db_kraken2} \
     --threads ${task.cpus} \
-    --report "\${filename}.report.txt" \
-    --output "\${filename}.out"
+    --report "${name}-split.report.txt" \
+    --output "${name}.out"
     """
 }
 
-process kraken2_genera {
+process kraken_split {
 
-    label 'contams'
-    label 'process_high'
+    label 'process_low'
 
-    publishDir "${params.resultsDir}/Kraken/", mode: 'copy'
+    //publishDir "${params.resultsDir}/Kraken_split/", mode: 'copy'
 
     errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
 
     input:
-    path(assembly)
+    path(report)
+    path(idl)
     path(taxdir)
 
     output:
-    path("${assembly.baseName}-parsed.report"), emit: report
-    path("${assembly.baseName}.report.txt"), emit: krona
+    path("${report.baseName}-parsed.report")
 
     script:
-    """
-    filename=\$(basename -- "${assembly}")
-    filename="\${filename%.*}"
-
-    inst-abbr-ids.pl ${assembly} \
-    --id-regex=:DEF \
-    --id-prefix=\$filename
-
-    inst-split-seqs.pl \$filename-abbr.${params.format} \
-    --out=-split
-
-    #labeller
-    grep species ${taxdir}/nodes.dmp | cut -f1 > genus.taxid
-
-    create-labeler.pl genus.taxid \
+    """    
+    kraken-parser.pl "${report}" \
     --taxdir=${taxdir} \
-    --level=${params.taxlevel} \
-    --kingdoms=Bacteria Archaea Eukaryota \
-    > file.idl
-    
-    kraken2 \
-    --use-names \$filename-abbr-split.${params.format} \
-    --db ${params.db_kraken2} \
-    --threads ${task.cpus} \
-    --report "\${filename}.report.txt" \
-    --output "\${filename}.out"
-
-    kraken-parser.pl "\${filename}.report.txt" \
-    --taxdir=${taxdir} \
-    --outfile="\${filename}-parsed.report" \
-    --taxon-list=file.idl \
+    --outfile="${report.baseName}-parsed.report" \
+    --taxon-list=${idl} \
     --auto-detect=${params.automode}
     """
 }

@@ -50,6 +50,5 @@ process gunc {
     do
         gunc plot --diamond_file \${file}
     done
-
     """
 }

@@ -23,15 +23,13 @@ process krona {
 
     input:
     path(report)
+    val(origin)
 
     output:
-    path("${report.simpleName}_krona.html")
+    path("${report.simpleName}_${origin}_krona.html")
 
     script:
     """
-    filename=\$(basename -- "${report}")
-    filename="\${filename%%.*}"
-
-    ktImportTaxonomy -tax "${params.db_krona}" -t 5 -m 3 -o \${filename}_krona.html ${report}
+    ktImportTaxonomy -tax "${params.db_krona}" -t 5 -m 3 -o ${report.simpleName}_${origin}_krona.html ${report}
     """
 }

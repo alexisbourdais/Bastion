@@ -2,7 +2,7 @@ process prodigal {
 
     label 'process_medium'
 
-    publishDir "${params.resultsDir}/Annotation/", mode: 'copy'
+    publishDir "${params.resultsDir}/Annotation/", mode: 'copy', pattern: "*.gff3"
 
     input:
     path(assembly)
@@ -13,9 +13,6 @@ process prodigal {
 
     script:
     """
-    filename=\$(basename -- "${assembly}")
-    filename="\${filename%%.*}"
-
-    prodigal -i ${assembly} -o \${filename}.gff3 -f gff
+    prodigal -i ${assembly} -o ${assembly.simpleName}.gff3 -f gff
     """
 }

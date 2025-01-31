@@ -19,23 +19,30 @@ process omark {
 
     label 'process_medium'
 
-    publishDir "${params.resultsDir}/Omark/", mode: 'copy'
+    publishDir "${params.resultsDir}/Omark/", mode: 'copy', pattern: "${proteins.simpleName}/${proteins.simpleName}_detailed_summary.txt"
+    publishDir "${params.resultsDir}/Omark/", mode: 'copy', pattern: "${proteins.simpleName}/${proteins.simpleName}.png"
 
     input:
     path(proteins)
 
     output:
-    path("${proteins.simpleName}/${proteins.simpleName}_detailed_summary.txt"), emit: report
+    path("${proteins.simpleName}/${proteins.simpleName}_detailed_summary.txt")
+    path("${proteins.simpleName}/${proteins.simpleName}.png")
     path("${proteins.simpleName}/"), emit: plot
-    //path("${proteins.simpleName}/${proteins.simpleName}.png")
+    path("${proteins.simpleName}_omark_besthit.txt"), emit: report
 
     script:
     """
-    filename=\$(basename -- "${proteins}")
-    filename="\${filename%%.*}"
+    omamer search --db ${params.db_omark} --query ${proteins} --out ${proteins.simpleName}.tsv --nthreads ${task.cpus}
+    omark -f ${proteins.simpleName}.tsv -d ${params.db_omark} -o ${proteins.simpleName}
 
-    omamer search --db ${params.db_omark} --query ${proteins} --out \${filename}.tsv --nthreads ${task.cpus}
-    omark -f \${filename}.tsv -d ${params.db_omark} -o \${filename}
+    cp ${proteins.simpleName}/${proteins.simpleName}.sum ./
+
+    if [ \$(wc -l < "${proteins.simpleName}.sum") -ge 15 ]; then
+        sed -n '14p' "${proteins.simpleName}.sum" | cut -f1,4 | awk -v filename="\$(${proteins.simpleName} | sed 's/_proteins//')" '{print filename "\t" \$0 "\t" "potential_contam"}' >> ${proteins.simpleName}_omark_besthit.txt
+    else
+        sed -n '14p' "${proteins.simpleName}.sum" | cut -f1,4 | awk -v filename="\$(${proteins.simpleName} | sed 's/_proteins//')" '{print filename "\t" \$0 "\t" "no_contam"}' >> ${proteins.simpleName}_omark_besthit.txt
+    fi
     """
 }
 
@@ -53,7 +60,6 @@ process omark_plot {
 
     script:
     """
-
     mkdir omark_results_dir
     mv ${omark_results_multi} ./omark_results_dir/
 

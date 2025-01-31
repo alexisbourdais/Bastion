@@ -1,6 +1,8 @@
 process final_report {
 
-    publishDir "${params.resultsDir}", mode: 'move'
+    publishDir "${params.resultsDir}", mode: 'move', pattern: "Bastion_FinalReport.tsv"
+    publishDir "${params.resultsDir}/Quast/", mode: 'move', pattern: "quast_multi.report"
+    publishDir "${params.resultsDir}/Kraken/", mode: 'move', pattern: "kraken2_multi.report"
 
     input:
     path(busco_report_multi)
@@ -11,12 +13,14 @@ process final_report {
     path(eukcc_report)
     path(gtdbtk_report)
     path(physeter_multi_report)
-    //path(omark_report_multi)
-    //path(kmerfinder_report)
-    //path(kraken2_multi_report)
+    path(kraken2_multi_report)
+    path(kmerfinder_report)
+    path(omark_report_multi)
 
     output:
     path("Bastion_FinalReport.tsv")
+    path(quast_report_multi)
+    path(kraken2_multi_report)
 
     script:
     """
@@ -28,6 +32,9 @@ process final_report {
     --checkm1 ${checkm1_report} \
     --eukcc ${eukcc_report} \
     --gtdbtk ${gtdbtk_report} \
-    --physeter ${physeter_multi_report}
+    --physeter ${physeter_multi_report} \
+    --kraken ${kraken2_multi_report} \
+    --kmerfinder ${kmerfinder_report} \
+    --omark ${omark_report_multi}
     """
 }

@@ -21,58 +21,61 @@ process busco {
 
     label 'process_high'
 
-    publishDir "${params.resultsDir}/Busco", mode: 'copy'
+    //publishDir "${params.resultsDir}/Busco_${mode}", mode: 'copy'
 
     errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
 
     input:
     path(assembly)
+    val(mode)
 
     output:
-    path("${assembly.baseName}_BuscoResults.csv"), emit : report
+    path("${assembly.baseName}_BuscoResults.csv"), optional: true, emit: report
     path("short_summary.*.txt"), emit : plot
 
     script:
     if (params.lineage_busco=="auto-lineage" || params.lineage_busco=="auto-lineage*") {
         """
-        filename=\$(basename -- "${assembly}")
-        filename="\${filename%.*}"
-
         busco --download_path ${params.db_busco} \
         -i ${assembly} \
-        -m ${params.mode_busco} \
+        -m ${mode} \
         --${params.lineage_busco} \
         -c ${task.cpus} \
-        -o \${filename}
+        -o ${assembly.baseName}
 
-        if [ -f "\${filename}"/short_summary.specific.*.json ]; then
-            jsonRead.py --input "\${filename}"/short_summary.specific.*.json
-            mv "\${filename}"/short_summary.specific.*.txt ./
+        if [ -f "${assembly.baseName}"/short_summary.specific.*.json ]; then
+            if [ $mode == "genome" ]; then
+                jsonRead.py --input "${assembly.baseName}"/short_summary.specific.*.json
+            fi
+            mv "${assembly.baseName}"/short_summary.specific.*.txt ./
         else
-            jsonRead.py --input "\${filename}"/short_summary.generic.*.json
-            mv "\${filename}"/short_summary.generic.*.txt ./
+            if [ $mode == "genome" ]; then
+                jsonRead.py --input "${assembly.baseName}"/short_summary.generic.*.json
+            fi
+            mv "${assembly.baseName}"/short_summary.generic.*.txt ./
         fi
         """
     }
     
     else {
         """
-        filename=\$(basename -- "${assembly}")
-        filename="\${filename%.*}"
-
         busco --download_path ${params.db_busco} \
         -i ${assembly} \
-        -m ${params.mode_busco} \
+        -m ${mode} \
         -l ${params.lineage_busco} \
         -c ${task.cpus} \
-        -o \${filename}
+        -o ${assembly.baseName}
 
-        if [ -f "\${filename}"/short_summary.specific.*.json ]; then
-            jsonRead.py --input "\${filename}"/short_summary.specific*.json
-            mv "\${filename}"/short_summary.specific.*.txt ./
+        if [ -f "${assembly.baseName}"/short_summary.specific.*.json ]; then
+            if [ $mode == "genome" ]; then
+                jsonRead.py --input "${assembly.baseName}"/short_summary.specific*.json
+            fi
+            mv "${assembly.baseName}"/short_summary.specific.*.txt ./
         else
-            jsonRead.py --input "\${filename}"/short_summary.generic*.json
-            mv "\${filename}"/short_summary.generic.*.txt ./
+            if [ $mode == "genome" ]; then
+                jsonRead.py --input "${assembly.baseName}"/short_summary.generic*.json
+            fi
+            mv "${assembly.baseName}"/short_summary.generic.*.txt ./
         fi
         """
     }
@@ -88,9 +91,10 @@ process busco_plot {
 
     input:
     path(short_summary_multi)
+    val(mode)
 
     output:
-    path("busco_figure.png")
+    path("busco_${mode}_figure.png")
 
     script:
         """
@@ -98,6 +102,6 @@ process busco_plot {
         mv ${short_summary_multi} ./short_summary_dir/
 
         generate_plot.py -wd ./short_summary_dir/
-        mv ./short_summary_dir/busco_figure.png ./
+        mv ./short_summary_dir/busco_figure.png ./busco_${mode}_figure.png
         """
 }

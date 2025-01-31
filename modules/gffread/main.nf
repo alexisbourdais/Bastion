@@ -13,9 +13,6 @@ process gffread {
 
     script:
     """
-    filename=\$(basename -- "${assembly}")
-    filename="\${filename%%.*}"
-
-    gffread -g ${assembly} -y "\${filename}_proteins.fasta" ${annotation}
+    gffread -g ${assembly} -y "${assembly.simpleName}_proteins.fasta" ${annotation}
     """
 }

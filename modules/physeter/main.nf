@@ -9,15 +9,18 @@ process setup_Physeter {
 
     output:
     path("physeter_db/")
+    path("taxdump/")
 
     script:
     """
     wget https://figshare.com/ndownloader/files/32405687 -O Cornet-Baurain.tgz
     tar -xzf Cornet-Baurain.tgz
     mkdir physeter_db/
-    mv Cornet-2022-GBIO-Figshare/contam-labels.idl Cornet-2022-GBIO-Figshare/life-tqmd-of73.dmnd Cornet-2022-GBIO-Figshare/life-tqmd-of73.gca Cornet-2022-GBIO-Figshare/taxdump-20211206/* physeter_db/
-    
-    #setup-taxdir.pl --update-cache --taxdir=physeter_db
+    mv Cornet-2022-GBIO-Figshare/life-tqmd-of73* ./physeter_db/
+    mv Cornet-2022-GBIO-Figshare/contam-labels.idl ./physeter_db/
+
+    mkdir taxdump
+    setup-taxdir.pl --taxdir=./taxdump/
     """
 }
 
@@ -25,7 +28,7 @@ process physeter {
 
     label 'process_medium'
 
-    publishDir "${params.resultsDir}/Physeter/", mode: 'copy'
+    publishDir "${params.resultsDir}/Physeter/", mode: 'copy', pattern: "${assembly.baseName}.tsv"
 
     errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
 
@@ -34,19 +37,19 @@ process physeter {
     path(taxdir)
 
     output:
-    path("${assembly.baseName}-parsed.report")
+    path("${assembly.baseName}-parsed.report"), emit: report
+    path("${assembly.baseName}.tsv"), emit: krona
+    tuple val("${assembly.baseName}"), path("${assembly.baseName}-abbr-split.fasta"), emit: kraken
+    path("file.idl"), emit: kraken_split
 
     script:
     """
-    filename=\$(basename -- "${assembly}")
-    filename="\${filename%.*}"
-
     #Format
     inst-abbr-ids.pl ${assembly} \
     --id-regex=:DEF \
-    --id-prefix=\$filename
+    --id-prefix=${assembly.baseName}
 
-    inst-split-seqs.pl \$filename-abbr.${params.format} \
+    inst-split-seqs.pl ${assembly.baseName}-abbr.${params.format} \
     --out=-split
 
     #labeller
@@ -62,8 +65,8 @@ process physeter {
     mkdir temp
     diamond blastx \
     -d ${params.db_physeter} \
-    -q \$filename-abbr-split.${params.format} \
-    -o \$filename.blastx \
+    -q ${assembly.baseName}-abbr-split.${params.format} \
+    -o ${assembly.baseName}-abbr-split.blastx \
     -t temp \
     -k 50 \
     -e 1e-10 \
@@ -73,19 +76,21 @@ process physeter {
     rm -rf temp
     
     #Run Physeter
-    physeter.pl \$filename.blastx \
+    mv ${assembly.baseName}-abbr-split.${params.format} ${assembly.baseName}-abbr-split.fasta
+    physeter.pl ${assembly.baseName}-abbr-split.blastx \
     --fasta-dir=./ \
-    --outfile=\$filename.report \
+    --outfile=${assembly.baseName}.report \
     --taxdir=${taxdir} \
     --taxon-list=file.idl \
     --auto-detect \
-    --kraken \
-    --krona
-    
-    kraken-parser.pl \$filename-kraken.tsv \
+    --kraken
+
+    kraken-parser.pl ${assembly.baseName}-abbr-split-kraken.tsv \
     --taxdir=${taxdir} \
-    --outfile=\$filename-parsed.report \
+    --outfile=${assembly.baseName}-parsed.report \
     --taxon-list=file.idl \
     --auto-detect=${params.automode}
+
+    mv ${assembly.baseName}-abbr-split-kraken.tsv ${assembly.baseName}.tsv
     """
 }
