@@ -59,7 +59,7 @@ def helpMessage() {
     --db_checkm1        Path to database directory
     --db_omark          Path to database directory
     --db_physeter       Path to life-tqmd-of73.dmnd
-    --taxdir            Path to taxdump
+    --taxdump           Path to taxdump
     --db_kmerfinder     Path to database directory
 
     OPTIONAL parameter
@@ -75,11 +75,7 @@ def helpMessage() {
     --mode_quast            [bacteria], eukaryote, fungus
 
     Busco
-    --mode_busco            [genome], proteins
     --lineage_busco         [auto-lineage], bacteria_odb10, fungi_odb10 ...
-
-    Eukcc2
-    --mode_eukcc            [DNA] ...
 
     Physeter
     --taxlevel              [phylum]
@@ -88,9 +84,7 @@ def helpMessage() {
     Kmerfinder
     --taxon_kmerfinder      [bacteria], archae, fungi, protozoa
 
-
     nextflow run Bastion.nf --help
-
     """.stripIndent()
 }
 
@@ -105,21 +99,21 @@ if (params.help){
 ////////////    Modules     //////////////////
 //////////////////////////////////////////////
 
-include { setup_Eukcc; eukcc_folder }       from './modules/eukcc'
-include { setup_Checkm1; checkm1 }          from './modules/checkm1'
-include { setup_Gunc; gunc }                from './modules/gunc'
-include { setup_Kraken2; kraken2 }          from './modules/kraken2'
-include { setup_Gtdbtk; gtdbtk }            from './modules/gtdbtk'
-include { setup_Physeter; physeter }        from './modules/physeter'
-include { setup_Busco; busco; busco_plot }  from './modules/busco'
-include { setup_Checkm2; checkm2 }          from './modules/checkm2'
-include { setup_Omark; omark; omark_plot }  from './modules/omark'
-include { quast }                           from './modules/quast'
-include { setup_Krona; krona }              from './modules/krona'
-include { prodigal }                        from './modules/prodigal'
-include { gffread }                         from './modules/gffread'
-include { final_report }                    from './modules/report'
-include { setup_Kmerfinder; kmerfinder }    from './modules/kmerfinder'
+include { setup_Eukcc; eukcc_folder }                                       from './modules/eukcc'
+include { setup_Checkm1; checkm1 }                                          from './modules/checkm1'
+include { setup_Gunc; gunc }                                                from './modules/gunc'
+include { setup_Kraken2; kraken2; kraken_split }                            from './modules/kraken2'
+include { setup_Gtdbtk; gtdbtk }                                            from './modules/gtdbtk'
+include { setup_Physeter; physeter }                                        from './modules/physeter'
+include { setup_Busco; busco; busco_plot }                                  from './modules/busco'
+include { setup_Checkm2; checkm2 }                                          from './modules/checkm2'
+include { setup_Omark; omark; omark_plot }                                  from './modules/omark'
+include { quast }                                                           from './modules/quast'
+include { setup_Krona; krona as krona_kraken; krona as krona_physeter }     from './modules/krona'
+include { prodigal }                                                        from './modules/prodigal'
+include { gffread }                                                         from './modules/gffread'
+include { final_report }                                                    from './modules/report'
+include { setup_Kmerfinder; kmerfinder }                                    from './modules/kmerfinder'
 
 ///////////////////////////////////////////////////////////
 //////////////////     Sub-Workflow     ///////////////////
@@ -194,6 +188,8 @@ workflow annotation_wf {
     gffread(prodigal.out)
     omark(gffread.out)
     omark_plot(omark.out.plot.collect())
+    busco(gffread.out, "proteins")
+    busco_plot(busco.out.plot.collect(), "proteins")
 
     emit:
     omark.out.report
@@ -204,8 +200,8 @@ workflow analysis_wf {
     data_file = Channel.fromPath("${params.assemblyFiles}")
     data_dir = Channel.fromPath("${params.assemblyDir}")
     gunc(data_dir)
-    busco(data_file)
-    busco_plot(busco.out.plot.collect())
+    busco(data_file, "genome")
+    busco_plot(busco.out.plot.collect(), "genome")
     quast(data_file)
     eukcc_folder(data_dir)
     checkm2(data_dir)
@@ -213,9 +209,11 @@ workflow analysis_wf {
     annotation_wf(data_file)
     gtdbtk(data_dir)
     kmerfinder(data_file)
-    kraken2(data_file)
-    krona(kraken2.out.krona)
-    physeter(data_file, params.taxdir_physeter)
+    physeter(data_file, params.taxdump)
+    krona_physeter(physeter.out.krona, "physeter")
+    kraken2(physeter.out.kraken)
+    kraken_split(kraken2.out, physeter.out.kraken_split, params.taxdump)
+    krona_kraken(kraken2.out, "kraken")
 
     final_report(
         busco.out.report.collectFile(name: 'busco_multi.report'), \
@@ -225,10 +223,10 @@ workflow analysis_wf {
         checkm1.out, \
         eukcc_folder.out, \
         gtdbtk.out, \
-        physeter.out.collectFile(name: 'physeter_multi.report')
-        //annotation_wf.out.collectFile(name: 'omark_multi.report')
-        //kmerfinder.out
-        //kraken2.out.report.collectFile(name: 'kraken2_multi.report')
+        physeter.out.report.collectFile(name: 'physeter_multi.report'), \
+        kraken_split.out.collectFile(name: 'kraken2_multi.report'), \
+        kmerfinder.out.report.collectFile(name: 'kmerfinder_multi.report'), \
+        annotation_wf.out.collectFile(name: 'omark_multi.report')
     )
 }
 
