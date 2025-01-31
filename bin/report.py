@@ -10,12 +10,12 @@ import os
 ap = argparse.ArgumentParser()
 
 ### Files
-ap.add_argument("--busco", required=False)
-ap.add_argument("--quast", required=False)
-ap.add_argument("--eukcc", required=False)
-ap.add_argument("--gunc", required=False)
-ap.add_argument("--checkm1", required=False)
-ap.add_argument("--checkm2", required=False)
+ap.add_argument("--busco", default='', required=False)
+ap.add_argument("--quast", default='', required=False)
+ap.add_argument("--eukcc", default='', required=False)
+ap.add_argument("--gunc", default='', required=False)
+ap.add_argument("--checkm1", default='', required=False)
+ap.add_argument("--checkm2", default='', required=False)
 ap.add_argument("--omark", default='', required=False)
 ap.add_argument("--kmerfinder", default='', required=False)
 ap.add_argument("--gtdbtk", default='', required=False)
@@ -67,6 +67,14 @@ physeter_placement_dic = {}
 
 kraken_contam_dic = {}
 kraken_placement_dic = {}
+
+kmerfinder_RefSeq_id_dic = {}
+kmerfinder_taxonomy_dic = {}
+kmerfinder_tot_template_Coverage_dic = {}
+
+omark_ref_dic = {}
+omark_score_dic = {}
+omark_contam_dic = {}
 
 ##############
 ### Script ###
@@ -190,41 +198,50 @@ if os.path.isfile(args['gtdbtk']):
 if os.path.isfile(args['physeter']):
     physeter = csv.reader(open(args['physeter'], "r"), delimiter='\t')
     for line in physeter:
-        genome_id = line[0].replace("-kraken", "")
+        genome_id = line[0].replace("-abbr-split-kraken", "")
         placement = line[1]
         contam = line[3]
         physeter_contam_dic[genome_id] = contam
         physeter_placement_dic[genome_id] = placement
 
-#Omark TO DO
-if os.path.isfile(args['omark']):
-    omark = csv.reader(open(args['omark'], "r"), delimiter='\t')
-    for line in omark:
-        if ('Genome' in line):
-            continue
-        else:
-            genome_id = line[0]
-            placement = line[1]
-            score = line[2]
-
-            omark_placement_dic[genome_id] = placement
-            omark_score_dic[genome_id] = score
-
-#Kraken TO DO
+#Kraken
 if os.path.isfile(args['kraken']):
     kraken = csv.reader(open(args['kraken'], "r"), delimiter='\t')
     for line in kraken:
-        genome_id = line[0].replace(".report", "")
+        genome_id = line[0].replace("-abbr-split.report", "")
         placement = line[1]
         contam = line[3]
         kraken_contam_dic[genome_id] = contam
-        kraken_placement_dic[genome_id] = placement       
+        kraken_placement_dic[genome_id] = placement   
 
-#Kmerfinder TO DO
+#Kmerfinder
 if os.path.isfile(args['kmerfinder']):
     kmerfinder = csv.reader(open(args['kmerfinder'], "r"), delimiter='\t')
     for line in kmerfinder:
-        pass
+        if ('# Assembly' in line):
+            continue
+        else:
+            genome_id = line[0]
+            RefSeq_id = line[1]
+            taxonomy = line[17]
+            tot_template_Coverage = line[10]
+        
+            kmerfinder_RefSeq_id_dic[genome_id] = RefSeq_id
+            kmerfinder_taxonomy_dic[genome_id] = taxonomy
+            kmerfinder_tot_template_Coverage_dic[genome_id] = tot_template_Coverage
+
+#Omark
+if os.path.isfile(args['omark']):
+    omark = csv.reader(open(args['omark'], "r"), delimiter='\t')
+    for line in omark:
+        genome_id = line[0]
+        placement = line[1]
+        score = line[2]
+        contam = line[3]
+
+        omark_ref_dic[genome_id] = placement
+        omark_score_dic[genome_id] = score
+        omark_contam_dic[genome_id] = contam
 
 ### Results
 results_file=open("Bastion_FinalReport.tsv", "a")
@@ -237,7 +254,9 @@ Kraken_placement\tKraken_contamination\t\
 Checkm2_completeness\tCheckm2_contamination\t\
 Gtdbtk_placement\tGtdbtk_reference\t\
 Eukcc2_contamination\tEukcc2_completeness\t\
-quast_#contigs\tquast_tot_length\tquast_GC\tquast_N50", file=results_file)
+quast_#contigs\tquast_tot_length\tquast_GC\tquast_N50\t\
+kmerfinder_RefSeq_id\tkmerfinder_taxonomy\tkmerfinder_tot_template_Coverage\t\
+Omark_Main_species\tOmark_score\tContam", file=results_file)
 
 for genome in genome_list:
     checkm1_complet=checkm1_complet_dic.get(genome)
@@ -270,14 +289,19 @@ for genome in genome_list:
     eukcc_complet=eukcc_complet_dic.get(genome)
     eukcc_contam=eukcc_contam_dic.get(genome)
 
-    omark_placement=omark_placement_dic.get(genome)
-    omark_score=omark_score_dic.get(genome)
-
     physeter_contam=physeter_contam_dic.get(genome)
     physeter_placement=physeter_placement_dic.get(genome)
 
     kraken_contam=kraken_contam_dic.get(genome)
     kraken_placement=kraken_placement_dic.get(genome)
+
+    kmerfinder_RefSeq_id=kmerfinder_RefSeq_id_dic.get(genome)
+    kmerfinder_taxonomy=kmerfinder_taxonomy_dic.get(genome)
+    kmerfinder_tot_template_Coverage=kmerfinder_tot_template_Coverage_dic.get(genome)
+
+    omark_ref=omark_ref_dic.get(genome)
+    omark_score=omark_score_dic.get(genome)
+    omark_contam=omark_contam_dic.get(genome)
 
     print(f"{genome}\t\
 {checkm1_complet}\t{checkm1_contam}\t{checkm1_str}\t\
@@ -288,4 +312,6 @@ for genome in genome_list:
 {checkm2_complet}\t{checkm2_contam}\t\
 {gtdbtk_placement}\t{gtdbtk_reference}\t\
 {eukcc_contam}\t{eukcc_complet}\t\
-{quast_contig}\t{quast_length}\t{quast_gc}\t{quast_n50}", file=results_file)
+{quast_contig}\t{quast_length}\t{quast_gc}\t{quast_n50}\t\
+{kmerfinder_RefSeq_id}\t{kmerfinder_taxonomy}\t{kmerfinder_tot_template_Coverage}\t\
+{omark_ref}\t{omark_score}\t{omark_contam}", file=results_file)
