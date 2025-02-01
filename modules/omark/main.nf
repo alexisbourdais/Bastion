@@ -40,9 +40,9 @@ process omark {
     genome=\$(echo "${proteins.simpleName}" | sed 's/_proteins//')
 
     if [ -z "\$(sed -n '15p' ${proteins.simpleName}.sum)" ]; then
-        sed -n '14p' "${proteins.simpleName}.sum" | cut -f1,4 | while read field1 field4; do echo -e "\${genome}\t\${field1}\t\${field4}\tno_contam"; done >> "${proteins.simpleName}_omark_besthit.txt"
+        sed -n '14p' "${proteins.simpleName}.sum" | cut -f1,4 | while read field1 field4; do echo -e "\${genome};\${field1};\${field4};no_contam"; done >> "${proteins.simpleName}_omark_besthit.txt"
     else
-        sed -n '14p' "${proteins.simpleName}.sum" | cut -f1,4 | while read field1 field4; do echo -e "\${genome}\t\${field1}\t\${field4}\tpotential_contam"; done >> "${proteins.simpleName}_omark_besthit.txt"
+        sed -n '14p' "${proteins.simpleName}.sum" | cut -f1,4 | while read field1 field4; do echo -e "\${genome};\${field1};\${field4};potential_contam"; done >> "${proteins.simpleName}_omark_besthit.txt"
     fi
     """
 }
