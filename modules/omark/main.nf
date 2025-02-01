@@ -37,11 +37,12 @@ process omark {
     omark -f ${proteins.simpleName}.tsv -d ${params.db_omark} -o ${proteins.simpleName}
 
     cp ${proteins.simpleName}/${proteins.simpleName}.sum ./
+    genome=\$(echo "${proteins.simpleName}" | sed 's/_proteins//')
 
-    if [ \$(wc -l < "${proteins.simpleName}.sum") -ge 15 ]; then
-        sed -n '14p' "${proteins.simpleName}.sum" | cut -f1,4 | awk -v filename="\$(${proteins.simpleName} | sed 's/_proteins//')" '{print filename "\t" \$0 "\t" "potential_contam"}' >> ${proteins.simpleName}_omark_besthit.txt
+    if [ -z "\$(sed -n '15p' ${proteins.simpleName}.sum)" ]; then
+        sed -n '14p' "${proteins.simpleName}.sum" | cut -f1,4 | while read field1 field4; do echo -e "\${genome}\t\${field1}\t\${field4}\tno_contam"; done >> "${proteins.simpleName}_omark_besthit.txt"
     else
-        sed -n '14p' "${proteins.simpleName}.sum" | cut -f1,4 | awk -v filename="\$(${proteins.simpleName} | sed 's/_proteins//')" '{print filename "\t" \$0 "\t" "no_contam"}' >> ${proteins.simpleName}_omark_besthit.txt
+        sed -n '14p' "${proteins.simpleName}.sum" | cut -f1,4 | while read field1 field4; do echo -e "\${genome}\t\${field1}\t\${field4}\tpotential_contam"; done >> "${proteins.simpleName}_omark_besthit.txt"
     fi
     """
 }

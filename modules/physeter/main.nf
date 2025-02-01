@@ -76,7 +76,10 @@ process physeter {
     rm -rf temp
     
     #Run Physeter
-    mv ${assembly.baseName}-abbr-split.${params.format} ${assembly.baseName}-abbr-split.fasta
+    if [ "${params.format}" != "fasta" ]; then
+        mv ${assembly.baseName}-abbr-split.${params.format} ${assembly.baseName}-abbr-split.fasta
+    fi
+
     physeter.pl ${assembly.baseName}-abbr-split.blastx \
     --fasta-dir=./ \
     --outfile=${assembly.baseName}.report \

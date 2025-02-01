@@ -45,12 +45,12 @@ process busco {
 
         if [ -f "${assembly.baseName}"/short_summary.specific.*.json ]; then
             if [ $mode == "genome" ]; then
-                jsonRead.py --input "${assembly.baseName}"/short_summary.specific.*.json
+                jsonRead.py --format ${params.format} --input "${assembly.baseName}"/short_summary.specific.*.json
             fi
             mv "${assembly.baseName}"/short_summary.specific.*.txt ./
         else
             if [ $mode == "genome" ]; then
-                jsonRead.py --input "${assembly.baseName}"/short_summary.generic.*.json
+                jsonRead.py --format ${params.format} --input "${assembly.baseName}"/short_summary.generic.*.json
             fi
             mv "${assembly.baseName}"/short_summary.generic.*.txt ./
         fi
@@ -68,12 +68,12 @@ process busco {
 
         if [ -f "${assembly.baseName}"/short_summary.specific.*.json ]; then
             if [ $mode == "genome" ]; then
-                jsonRead.py --input "${assembly.baseName}"/short_summary.specific*.json
+                jsonRead.py --format ${params.format} --input "${assembly.baseName}"/short_summary.specific*.json
             fi
             mv "${assembly.baseName}"/short_summary.specific.*.txt ./
         else
             if [ $mode == "genome" ]; then
-                jsonRead.py --input "${assembly.baseName}"/short_summary.generic*.json
+                jsonRead.py --format ${params.format} --input "${assembly.baseName}"/short_summary.generic*.json
             fi
             mv "${assembly.baseName}"/short_summary.generic.*.txt ./
         fi

@@ -1,8 +1,8 @@
 process final_report {
 
-    publishDir "${params.resultsDir}", mode: 'move', pattern: "Bastion_FinalReport.tsv"
-    publishDir "${params.resultsDir}/Quast/", mode: 'move', pattern: "quast_multi.report"
-    publishDir "${params.resultsDir}/Kraken/", mode: 'move', pattern: "kraken2_multi.report"
+    publishDir "${params.resultsDir}", mode: 'move'
+    //publishDir "${params.resultsDir}/Quast/", mode: 'move', pattern: "quast_multi.report"
+    //publishDir "${params.resultsDir}/Kraken/", mode: 'move', pattern: "kraken2_multi.report"
 
     input:
     path(busco_report_multi)
