@@ -12,6 +12,8 @@ import argparse
 #######################
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--input", required=True, help="Input file")
+ap.add_argument("-f", "--format", required=True, help="Format file")
+
 args = vars(ap.parse_args())
 
 ##############
@@ -34,7 +36,7 @@ Scores_archaea_odb10=""
 Scores_bacteria_odb10=""
 Scores_eukaryota_odb10=""
 
-results_file=open(f"{Input_file}".replace(".fasta", "_BuscoResults.csv"), "a")
+results_file=open(f"{Input_file}".replace(f".{args['format']}", "_BuscoResults.csv"), "a")
 
 #Entetes
 print("Input_file\tDataset\tComplete\tSingle\tDuplicated\tFragmented\tMissing_n_markers\tScaffold N50\tContigs N50\tPercent gaps\tNumber of scaffolds", file=results_file)

@@ -208,7 +208,7 @@ if os.path.isfile(args['physeter']):
 if os.path.isfile(args['kraken']):
     kraken = csv.reader(open(args['kraken'], "r"), delimiter='\t')
     for line in kraken:
-        genome_id = line[0].replace("-abbr-split.report", "")
+        genome_id = line[0].replace("-split.report", "")
         placement = line[1]
         contam = line[3]
         kraken_contam_dic[genome_id] = contam
@@ -235,9 +235,9 @@ if os.path.isfile(args['omark']):
     omark = csv.reader(open(args['omark'], "r"), delimiter='\t')
     for line in omark:
         genome_id = line[0]
-        placement = line[1]
-        score = line[2]
-        contam = line[3]
+        placement = line[1]+" "+line[2]
+        score = line[3]
+        contam = line[4]
 
         omark_ref_dic[genome_id] = placement
         omark_score_dic[genome_id] = score
