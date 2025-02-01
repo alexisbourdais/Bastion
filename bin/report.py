@@ -232,12 +232,12 @@ if os.path.isfile(args['kmerfinder']):
 
 #Omark
 if os.path.isfile(args['omark']):
-    omark = csv.reader(open(args['omark'], "r"), delimiter='\t')
+    omark = csv.reader(open(args['omark'], "r"), delimiter=';')
     for line in omark:
         genome_id = line[0]
-        placement = line[1]+" "+line[2]
-        score = line[3]
-        contam = line[4]
+        placement = line[1]
+        score = line[2]
+        contam = line[3]
 
         omark_ref_dic[genome_id] = placement
         omark_score_dic[genome_id] = score
