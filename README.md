@@ -97,11 +97,7 @@ nextflow run Bastion.nf --help
     --mode_quast            [bacteria], eukaryote, fungus
 
     Busco
-    --mode_busco            [genome], proteins
     --lineage_busco         [auto-lineage], bacteria_odb10, fungi_odb10 ...
-
-    Eukcc2
-    --mode_eukcc            [DNA] ...
 
     Physeter
     --taxlevel              [phylum]
