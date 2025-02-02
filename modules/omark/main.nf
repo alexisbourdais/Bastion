@@ -19,8 +19,8 @@ process omark {
 
     label 'process_medium'
 
-    publishDir "${params.resultsDir}/Omark/", mode: 'copy', pattern: "${proteins.simpleName}/${proteins.simpleName}_detailed_summary.txt"
-    publishDir "${params.resultsDir}/Omark/", mode: 'copy', pattern: "${proteins.simpleName}/${proteins.simpleName}.png"
+    publishDir "${params.resultsDir}/Omark/", mode: 'copy', pattern: "*/*_detailed_summary.txt"
+    publishDir "${params.resultsDir}/Omark/", mode: 'copy', pattern: "*/*.png"
 
     input:
     path(proteins)
@@ -38,12 +38,16 @@ process omark {
 
     cp ${proteins.simpleName}/${proteins.simpleName}.sum ./
     genome=\$(echo "${proteins.simpleName}" | sed 's/_proteins//')
+    taxon=\$(sed -n '14p' "${proteins.simpleName}.sum" | cut -f1)
+    score=\$(sed -n '14p' "${proteins.simpleName}.sum" | cut -f4)
 
     if [ -z "\$(sed -n '15p' ${proteins.simpleName}.sum)" ]; then
-        sed -n '14p' "${proteins.simpleName}.sum" | cut -f1,4 | while read field1 field4; do echo -e "\${genome};\${field1};\${field4};no_contam"; done >> "${proteins.simpleName}_omark_besthit.txt"
+        conta="no_contam"
     else
-        sed -n '14p' "${proteins.simpleName}.sum" | cut -f1,4 | while read field1 field4; do echo -e "\${genome};\${field1};\${field4};potential_contam"; done >> "${proteins.simpleName}_omark_besthit.txt"
+        conta="potential_contam"
     fi
+
+    echo -e "\${genome}\t\${taxon}\t\${score}\t\${conta}" > ${proteins.simpleName}_omark_besthit.txt
     """
 }
 

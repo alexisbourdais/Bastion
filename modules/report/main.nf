@@ -1,8 +1,6 @@
 process final_report {
 
     publishDir "${params.resultsDir}", mode: 'move'
-    //publishDir "${params.resultsDir}/Quast/", mode: 'move', pattern: "quast_multi.report"
-    //publishDir "${params.resultsDir}/Kraken/", mode: 'move', pattern: "kraken2_multi.report"
 
     input:
     path(busco_report_multi)
@@ -20,7 +18,6 @@ process final_report {
     output:
     path("Bastion_FinalReport.tsv")
     path(quast_report_multi)
-    path(kraken2_multi_report)
 
     script:
     """
