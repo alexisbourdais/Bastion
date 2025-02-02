@@ -120,7 +120,11 @@ nextflow run Bastion.nf --help
 
 - GTDBTK : https://ecogenomics.github.io/GTDBTk/
 
+- Gffread : https://github.com/gpertea/gffread
+
 - Gunc : https://grp-bork.embl-community.io/gunc/
+
+- Kmerfinder : https://bitbucket.org/genomicepidemiology/kmerfinder/src/master/
 
 - Kraken2 : https://github.com/DerrickWood/kraken2/wiki
 
@@ -130,11 +134,10 @@ nextflow run Bastion.nf --help
 
 - Physeter :  https://metacpan.org/dist/Bio-MUST-Apps-Physeter/view/lib/Bio/MUST/Apps/Physeter/Manual.pod
 
+- Prodigal : https://github.com/hyattpd/Prodigal
+
 - Quast : https://quast.sourceforge.net/docs/manual.html
 
-- Kmerfinder : https://bitbucket.org/genomicepidemiology/kmerfinder/src/master/
-
-- Prodigal : https://github.com/hyattpd/Prodigal
 
 ## References
 
