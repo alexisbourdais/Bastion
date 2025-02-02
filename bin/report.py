@@ -232,7 +232,7 @@ if os.path.isfile(args['kmerfinder']):
 
 #Omark
 if os.path.isfile(args['omark']):
-    omark = csv.reader(open(args['omark'], "r"), delimiter=';')
+    omark = csv.reader(open(args['omark'], "r"), delimiter='\t')
     for line in omark:
         genome_id = line[0]
         placement = line[1]
