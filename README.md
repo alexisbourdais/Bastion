@@ -26,7 +26,7 @@
 - CheckM2 DB    : 2.9 Go
 - Eukcc2 DB     : 11  Go
 - Gunc DB       : 13  Go
-- Kraken2 DB    : 16  Go (PlusPF-16 version)
+- Kraken2 DB    : 16  Go (PlusPFP-16 version)
 - Krona DB      : ??  Go
 - Physeter DB   : 700 Mo
 - Omark DB      : 9.4 Go
@@ -93,18 +93,12 @@ nextflow run Bastion.nf --help
     Results directory
     --resultsDir            Path to results directory, default: "./Results/"
 
-    Quast
-    --mode_quast            [bacteria], eukaryote, fungus
-
     Busco
     --lineage_busco         [auto-lineage], bacteria_odb10, fungi_odb10 ...
 
     Physeter
     --taxlevel              [phylum]
     --automode              [label_first]
-
-    Kmerfinder
-    --taxon_kmerfinder      [bacteria], archae, fungi, protozoa
 
 ## Documentation
 
