@@ -59,9 +59,6 @@ gtdbtk_reference_dic = {}
 eukcc_complet_dic = {}
 eukcc_contam_dic = {}
 
-omark_placement_dic = {}
-omark_score_dic = {}
-
 physeter_contam_dic = {}
 physeter_placement_dic = {}
 
