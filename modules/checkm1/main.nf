@@ -26,7 +26,7 @@ process checkm1 {
 
     label 'process_high'
 
-    //publishDir "${params.resultsDir}/", mode: 'copy'
+    //publishDir "${baseDir}/${params.resultsDir}/", mode: 'copy'
 
     errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
 

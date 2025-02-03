@@ -18,10 +18,11 @@ process kmerfinder {
 
     label 'process_medium'
 
-    publishDir "${params.resultsDir}/Kmerfinder/", mode: 'copy', pattern: "*_kmerfinder_results.txt"
+    publishDir "${baseDir}/${params.resultsDir}/Kmerfinder/", mode: 'copy', pattern: "*_kmerfinder_results.txt"
     
     input:
     path(assembly)
+    val(mode)
 
     output:
     path("${assembly.simpleName}_kmerfinder_results.txt")
@@ -29,7 +30,7 @@ process kmerfinder {
 
     script:
     """
-    kmerfinder.py -i ${assembly} -o ${assembly.simpleName} -db "${params.db_kmerfinder}${params.taxon_kmerfinder}/${params.taxon_kmerfinder}.ATG" -tax "${params.db_kmerfinder}${params.taxon_kmerfinder}/${params.taxon_kmerfinder}.tax" -x
+    kmerfinder.py -i ${assembly} -o ${assembly.simpleName} -db "${params.db_kmerfinder}${mode}/${mode}.ATG" -tax "${params.db_kmerfinder}${mode}/${mode}.tax" -x
     mv ${assembly.simpleName}/results.txt ./${assembly.simpleName}_kmerfinder_results.txt
 
     sed -n '1,2p' "${assembly.simpleName}_kmerfinder_results.txt" | awk -v prefix="${assembly.simpleName}" '{print prefix "\t" \$0}' > ${assembly.simpleName}_kmerfinder_tophit.txt

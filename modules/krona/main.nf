@@ -19,7 +19,7 @@ process krona {
 
     label 'process_low'
 
-    publishDir "${params.resultsDir}/Krona/", mode: 'copy'
+    publishDir "${baseDir}/${params.resultsDir}/Krona/", mode: 'copy'
 
     input:
     path(report)

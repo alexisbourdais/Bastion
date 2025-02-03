@@ -28,7 +28,7 @@ process physeter {
 
     label 'process_medium'
 
-    publishDir "${params.resultsDir}/Physeter/", mode: 'copy', pattern: "${assembly.baseName}.tsv"
+    publishDir "${baseDir}/${params.resultsDir}/Physeter/", mode: 'copy', pattern: "${assembly.baseName}.tsv"
 
     errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
 

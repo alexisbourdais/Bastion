@@ -2,7 +2,7 @@ process gffread {
 
     label 'process_medium'
 
-    publishDir "${params.resultsDir}/Annotation/", mode: 'copy'
+    publishDir "${baseDir}/${params.resultsDir}/Annotation/", mode: 'copy'
 
     input:
     path(assembly)

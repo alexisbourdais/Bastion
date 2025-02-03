@@ -1,6 +1,6 @@
 process final_report {
 
-    publishDir "${params.resultsDir}", mode: 'move'
+    publishDir "${baseDir}/${params.resultsDir}/", mode: 'move'
 
     input:
     path(busco_report_multi)
@@ -17,7 +17,6 @@ process final_report {
 
     output:
     path("Bastion_FinalReport.tsv")
-    path(quast_report_multi)
 
     script:
     """

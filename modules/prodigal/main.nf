@@ -2,7 +2,7 @@ process prodigal {
 
     label 'process_medium'
 
-    publishDir "${params.resultsDir}/Annotation/", mode: 'copy', pattern: "*.gff3"
+    publishDir "${baseDir}/${params.resultsDir}/Annotation/", mode: 'copy', pattern: "*.gff3"
 
     input:
     path(assembly)

@@ -24,7 +24,7 @@ process kraken2 {
 
     label 'process_high'
 
-    publishDir "${params.resultsDir}/Kraken/", mode: 'copy'
+    publishDir "${baseDir}/${params.resultsDir}/Kraken/", mode: 'copy'
 
     errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
 
@@ -49,7 +49,7 @@ process kraken_split {
 
     label 'process_low'
 
-    //publishDir "${params.resultsDir}/Kraken_split/", mode: 'copy'
+    //publishDir "${baseDir}/${params.resultsDir}/Kraken_split/", mode: 'copy'
 
     errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
 

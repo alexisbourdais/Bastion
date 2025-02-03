@@ -12,7 +12,7 @@ process setup_Busco {
 
     script:
     """
-    busco --download prokaryota virus
+    busco --download all
     mv busco_downloads/ busco_db/
     """
 }
@@ -21,7 +21,7 @@ process busco {
 
     label 'process_high'
 
-    //publishDir "${params.resultsDir}/Busco_${mode}", mode: 'copy'
+    //publishDir "${baseDir}/${params.resultsDir}/Busco_${mode}", mode: 'copy'
 
     errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
 
@@ -85,7 +85,7 @@ process busco_plot {
 
     label 'process_low'
 
-    publishDir "${params.resultsDir}/Busco", mode: 'copy'
+    publishDir "${baseDir}/${params.resultsDir}/Busco", mode: 'copy'
 
     errorStrategy { task.attempt <= 3 ? 'retry' : 'finish' }
 

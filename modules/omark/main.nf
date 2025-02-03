@@ -19,8 +19,8 @@ process omark {
 
     label 'process_medium'
 
-    publishDir "${params.resultsDir}/Omark/", mode: 'copy', pattern: "*/*_detailed_summary.txt"
-    publishDir "${params.resultsDir}/Omark/", mode: 'copy', pattern: "*/*.png"
+    publishDir "${baseDir}/${params.resultsDir}/Omark/", mode: 'copy', pattern: "*summary*"
+    publishDir "${baseDir}/${params.resultsDir}/Omark/", mode: 'copy', pattern: "*.png"
 
     input:
     path(proteins)
@@ -55,7 +55,7 @@ process omark_plot {
 
     label 'process_low'
 
-    publishDir "${params.resultsDir}/Omark/", mode: 'copy'
+    publishDir "${baseDir}/${params.resultsDir}/Omark/", mode: 'copy'
 
     input:
     path(omark_results_multi)
