@@ -2,10 +2,6 @@
 
 /*
 ===============================================================
- This script is largely based on the Genome quality assessment workflow from the Genera toolbox of Luc CORNET from the University of Liege:
- https://github.com/Lcornet/GENERA
- 
- ---------------------------------------------------------------
  Bastion Pipeline. Started September 2024.
  #### Homepage / Documentation
  https://github.com/alexisbourdais/Bastion/
@@ -21,16 +17,18 @@
 def helpMessage() {
     log.info """
 
-    Command : nextflow run Bastion.nf -profile slurm,singularity [option]
+    Command : nextflow run Bastion.nf -profile slurm,singularity [option] --workflow
 
     REQUIRED parameter
 
     -profile [standard]/slurm,      Select profile standard (local) or slurm. Default: standard          
              singularity/conda      Select profile singularity or conda. 
-                                    Physeter need singularity in both case.
+                                    Physeter need singularity in both case and busco's conda env has mistakes.
     
     --workflow                      Select workflow :  'setup' to download database
                                                        'analysis' to run all analyses
+
+    OPTIONAL parameter
 
     -resume                         used to resume a workflow from where it was previously stopped or interrupted
 
@@ -47,8 +45,9 @@ def helpMessage() {
     --setPhyseter
     --setOmark
     --setKmerfinder
+    --setPlasmidfinder
 
-    Database directory : automatic if installed with --workflow setup
+    Path to database directory : automatic if installed with --workflow setup
     --db_busco          Path to database directory
     --db_checkm2        Path to checkm2_uniref100.KO.1.dmnd
     --db_eukcc          Path to database directory
@@ -61,28 +60,21 @@ def helpMessage() {
     --db_physeter       Path to life-tqmd-of73.dmnd
     --taxdump           Path to taxdump
     --db_kmerfinder     Path to database directory
+    --db_plasmidfinder  Path to database directory
 
-    OPTIONAL parameter
-    
     Assembly directory
     --assemblyDir            Default: "./Data/"
     --format                 Default: "fasta"
 
     Results directory
-    --resultsDir            Path to results directory, default: "./Results/"
-
-    Quast
-    --mode_quast            [bacteria], eukaryote, fungus
+    --resultsDir            Path to results directory, default: "Results/"
 
     Busco
-    --lineage_busco         [auto-lineage], bacteria_odb10, fungi_odb10 ...
+    --lineage_busco         [auto-lineage], auto-lineage-prok, bacteria_odb10
 
     Physeter
     --taxlevel              [phylum]
     --automode              [label_first]
-
-    Kmerfinder
-    --taxon_kmerfinder      [bacteria], archae, fungi, protozoa
 
     nextflow run Bastion.nf --help
     """.stripIndent()
@@ -114,6 +106,8 @@ include { prodigal }                                                        from
 include { gffread }                                                         from './modules/gffread'
 include { final_report }                                                    from './modules/report'
 include { setup_Kmerfinder; kmerfinder }                                    from './modules/kmerfinder'
+include { setup_plasmidfinder; plasmidfinder }                              from './modules/plasmidfinder'
+include { barrnap }                                                         from './modules/barrnap'
 
 ///////////////////////////////////////////////////////////
 //////////////////     Sub-Workflow     ///////////////////
@@ -124,46 +118,39 @@ workflow setup_wf {
     if (params.setEukcc) {
         setup_Eukcc()
     }
-
     if (params.setBusco) {
         setup_Busco()
     }
     if (params.setGtdbtk) {
         setup_Gtdbtk()
     }
-
     if (params.setKraken2) {
         setup_Kraken2()
     }
-
     if (params.setKrona) {
         setup_Krona()
     }
-
     if (params.setCheckm1) {
         setup_Checkm1()
     }
-
     if (params.setGunc) {
         setup_Gunc()
     }
-
     if (params.setCheckm2) {
         setup_Checkm2()
     }
-
     if (params.setPhyseter) {
         setup_Physeter()
     }
-
     if (params.setOmark) {
         setup_Omark()
     }
-
     if (params.setKmerfinder) {
         setup_Kmerfinder()
     }
-
+    if (params.setPlasmidfinder) {
+        setup_plasmidfinder()
+    }
     if (params.setAll) {
         setup_Eukcc()
         setup_Busco()
@@ -176,6 +163,7 @@ workflow setup_wf {
         setup_Omark() 
         setup_Kmerfinder()
         setup_Gtdbtk()
+        setup_plasmidfinder()
     }
 }
 
@@ -208,12 +196,14 @@ workflow analysis_wf {
     checkm1(data_dir)
     annotation_wf(data_file)
     gtdbtk(data_dir)
-    kmerfinder(data_file)
     physeter(data_file, params.taxdump)
     krona_physeter(physeter.out.krona, "physeter")
     kraken2(physeter.out.kraken)
     kraken_split(kraken2.out, physeter.out.kraken_split, params.taxdump)
     krona_kraken(kraken2.out, "kraken")
+    plasmidfinder(data_file)
+    kmerfinder(data_file, "bacteria")
+    barrnap(data_file, "bac")
 
     final_report(
         busco.out.report.collectFile(name: 'busco_multi.report'), \
@@ -255,11 +245,10 @@ workflow {
     }
 }
 
-workflow.onComplete{
-    if (workflow.success) {
-        println("Workflow execution completed sucessfully !")
-    } 
-    else {
-        println("Workflow execution completed with errors !")
-    }
+workflow.onComplete = {
+    println("Workflow execution completed sucessfully !")
+}
+
+workflow.onError = {
+    println "Error: something when wrong"
 }

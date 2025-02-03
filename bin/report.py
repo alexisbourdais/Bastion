@@ -247,7 +247,7 @@ if os.path.isfile(args['omark']):
 results_file=open("Bastion_FinalReport.tsv", "a")
 print("Genome\t\
 Checkm_completeness\tCheckm_contamination\tCheckm_str\t\
-Busco_placemenent\tBusco_completeness\tBusco_duplicate\t\
+Busco_placemenent\tBusco_completeness\tBusco_single\tBusco_duplicate\tBusco_fragmented\tBusco_missing\t\
 GUNC_CSS\tGUNC_RRS\tGUNC_status\tGUNC_conta\t\
 Physeter_placement\tPhyseter_contamination\t\
 Kraken_placement\tKraken_contamination\t\
@@ -305,7 +305,7 @@ for genome in genome_list:
 
     print(f"{genome}\t\
 {checkm1_complet}\t{checkm1_contam}\t{checkm1_str}\t\
-{busco_placement}\t{busco_complet}\t{busco_duplicated}\t\
+{busco_placement}\t{busco_complet}\t{busco_single}\t{busco_duplicated}\t{busco_fragmented}\t{busco_missing}\t\
 {gunc_css}\t{gunc_RRS}\t{gunc_status}\t{gunc_contam}\t\
 {physeter_placement}\t{physeter_contam}\t\
 {kraken_placement}\t{kraken_contam}\t\
