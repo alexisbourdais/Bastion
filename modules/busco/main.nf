@@ -12,7 +12,7 @@ process setup_Busco {
 
     script:
     """
-    busco --download all
+    busco --download prokaryota virus
     mv busco_downloads/ busco_db/
     """
 }
