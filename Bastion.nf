@@ -30,7 +30,11 @@ def helpMessage() {
 
     OPTIONAL parameter
 
-    -resume                         used to resume a workflow from where it was previously stopped or interrupted
+    Singularity
+    --singularity "-B /home:/home -B ..."    Path to mount, default: /home
+
+    Nextflow
+    -resume                 used to resume a workflow from where it was previously stopped or interrupted
 
     Choose which database you want to set-up when using --workflow setup
     --setAll
@@ -76,7 +80,7 @@ def helpMessage() {
     --taxlevel              [phylum]
     --automode              [label_first]
 
-    nextflow run Bastion.nf --help
+    nextflow run Bastion.nf --help to show this help message
     """.stripIndent()
 }
 
