@@ -23,25 +23,12 @@
 
 4) Add to Data/ assemblies to analysis or select a directory with --assemblyDir and format with --format (default: fasta)
 
-### Set-Up database
+### Set-Up database (Over 200 Go of memory required)
 
 - If you don't have any of the necessary databases, just run `nextflow run Bastion.nf -profile slurm,singularity --workflow setup --setAll`
-- if you have some database already installed, run `nextflow run Bastion.nf -profile slurm,singularity --workflow setup --setBusco --setKraken2` in order to install Busco and Kraken2 database for exemple
+- if you have some database already installed, run `nextflow run Bastion.nf -profile slurm,singularity --workflow setup --setBusco --setKraken2` in order to install Busco (Prokaryota+virus) and Kraken2 (PlusPFP-16 version) database for exemple
 
-- Busco DB      : 8,4 Go (Prokaryota+virus)
-- CheckM1 DB    : 1,4 Go
-- CheckM2 DB    : 2.9 Go
-- Eukcc2 DB     : 11  Go
-- Gunc DB       : 13  Go
-- Kraken2 DB    : 16  Go (PlusPFP-16 version)
-- Krona DB      : ??  Go
-- Physeter DB   : 700 Mo
-- Omark DB      : 9.4 Go
-- GTDBTK DB     : 102 Go
-- Kmerfinder DB : ??  Go
-- PlasmidFinder : ??  Go
-
-If you have problems installing the gtdbtk database automatically due to its size, download it manually : https://ecogenomics.github.io/GTDBTk/installing/index.html
+If you have problems installing the gtdbtk database automatically due to its size (102 Go), download it manually : https://ecogenomics.github.io/GTDBTk/installing/index.html
 
 ### Run analysis
 
