@@ -15,13 +15,13 @@
 
 ## Quick start
 
-Install Nextflow, Singularity (and Conda if desired).
+1) Install Nextflow, Singularity (and Conda if desired).
 
-`git clone https://github.com/alexisbourdais/Bastion/`
+2) `git clone https://github.com/alexisbourdais/Bastion/`
 
-Add to Data/ assemblies to analysis or select a directory with --assemblyDir and format with --format (default: fasta)
+3) Change script permissions in bin/ `chmod +x bin/*`
 
-Change script permissions in bin/ `chmod +x bin/*`
+4) Add to Data/ assemblies to analysis or select a directory with --assemblyDir and format with --format (default: fasta)
 
 ### Set-Up database
 
@@ -40,6 +40,8 @@ Change script permissions in bin/ `chmod +x bin/*`
 - GTDBTK DB     : 102 Go
 - Kmerfinder DB : ??  Go
 - PlasmidFinder : ??  Go
+
+If you have problems installing the gtdbtk database automatically due to its size, download it manually : https://ecogenomics.github.io/GTDBTk/installing/index.html
 
 ### Run analysis
 
