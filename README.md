@@ -2,19 +2,26 @@
 
 ## Overview
 
-**Bacterial ASsembly contaminaTION** is a nextflow pipeline allowing the automatic quality assemment of bacterial assembly. This project is a standalone of the Genome quality assessment workflow from the **Genera** toolbox of Luc CORNET from the University of Liege: 
+**Bacterial ASsembly contaminaTION** is a nextflow pipeline allowing the automatic quality assemment of bacterial assembly. This project is largely inspired by the Genome quality assessment workflow from the **Genera** toolbox of Luc CORNET from the University of Liege: 
 
 **https://github.com/Lcornet/GENERA.**
-
 
 **Changement from original script :**
 - Nextflow dsl 2
 - Slurm and Conda or singularity profiles
-- Includes GTDBTK, Kmerfinder and Omark tools
+- Includes GTDBTK, Kmerfinder, Omark, PlasmidFinder and Barrnap tools
 - Busco plots, Diamond plots from Gunc results and Krona from Kraken/Physeters results
 - Annotation with Prodigal
 
 ## Quick start
+
+Install Nextflow, Singularity (and Conda if desired).
+
+`git clone https://github.com/alexisbourdais/Bastion/`
+
+Add to Data/ assemblies to analysis or select a directory with --assemblyDir and format with --format (default: fasta)
+
+Change script permissions in bin/ `chmod +x bin/*`
 
 ### Set-Up database
 
@@ -32,27 +39,30 @@
 - Omark DB      : 9.4 Go
 - GTDBTK DB     : 102 Go
 - Kmerfinder DB : ??  Go
-
-Total = ?? Go
+- PlasmidFinder : ??  Go
 
 ### Run analysis
 
-  To completed
+`nextflow run Bastion.nf -profile slurm,singularity --workflow analysis --singularity "-B /home:/home"`
+
+or edit **Launcher_Bastion_analysis.sh**, then `chmod +x Launcher_Bastion_analysis.sh` and `./Launcher_Bastion_analysis.sh`
 
 ## Parameters
 
 nextflow run Bastion.nf --help
 
-    Command : nextflow run Bastion.nf -profile slurm,singularity [option]
+    Command : nextflow run Bastion.nf -profile slurm,singularity [option] --workflow
 
     REQUIRED parameter
 
     -profile [standard]/slurm,      Select profile standard (local) or slurm. Default: standard          
              singularity/conda      Select profile singularity or conda. 
-                                    Physeter need singularity in both case.
+                                    Physeter need singularity in both case and busco's conda env has mistakes.
     
     --workflow                      Select workflow :  'setup' to download database
                                                        'analysis' to run all analyses
+
+    OPTIONAL parameter
 
     -resume                         used to resume a workflow from where it was previously stopped or interrupted
 
@@ -69,32 +79,32 @@ nextflow run Bastion.nf --help
     --setPhyseter
     --setOmark
     --setKmerfinder
+    --setPlasmidfinder
 
-    Database directory : automatic if installed with --workflow setup
-    --db_busco          Path to database directory
-    --db_checkm2        Path to checkm2_uniref100.KO.1.dmnd
-    --db_eukcc          Path to database directory
-    --db_gunc           Path to gunc_db_progenomes2.1.dmnd
-    --db_kraken2        Path to database directory
-    --db_krona          Path to database directory
-    --db_gtdbtk         Path to database directory
-    --db_checkm1        Path to database directory
-    --db_omark          Path to database directory
-    --db_physeter       Path to life-tqmd-of73.dmnd
-    --taxdir            Path to taxdump
-    --db_kmerfinder     Path to database directory
+    Path to database directory : automatic if installed with --workflow setup
+    --db_busco            Path to database directory
+    --db_checkm2          Path to checkm2_uniref100.KO.1.dmnd
+    --db_eukcc            Path to database directory
+    --db_gunc             Path to gunc_db_progenomes2.1.dmnd
+    --db_kraken2          Path to database directory
+    --db_krona            Path to database directory
+    --db_gtdbtk           Path to database directory
+    --db_checkm1          Path to database directory
+    --db_omark            Path to database directory
+    --db_physeter         Path to life-tqmd-of73.dmnd
+    --taxdump             Path to taxdump
+    --db_kmerfinder       Path to database directory
+    --db_plasmidfinder    Path to database directory
 
-    OPTIONAL parameter
-    
     Assembly directory
     --assemblyDir            Default: "./Data/"
     --format                 Default: "fasta"
 
     Results directory
-    --resultsDir            Path to results directory, default: "./Results/"
+    --resultsDir            Path to results directory, default: "Results/"
 
     Busco
-    --lineage_busco         [auto-lineage], bacteria_odb10, fungi_odb10 ...
+    --lineage_busco         [auto-lineage], auto-lineage-prok, bacteria_odb10
 
     Physeter
     --taxlevel              [phylum]
@@ -102,7 +112,15 @@ nextflow run Bastion.nf --help
 
 ## Documentation
 
+- Nextflow : https://www.nextflow.io/
+
+- Singularity : https://sylabs.io/docs/
+
+- Conda : https://docs.anaconda.com/miniconda/
+
 - GENERA : https://github.com/Lcornet/GENERA
+
+- Barrnap : https://github.com/tseemann/barrnap
 
 - Busco : https://busco.ezlab.org/
 
@@ -128,12 +146,17 @@ nextflow run Bastion.nf --help
 
 - Physeter :  https://metacpan.org/dist/Bio-MUST-Apps-Physeter/view/lib/Bio/MUST/Apps/Physeter/Manual.pod
 
+- Plasmidfinder : https://github.com/genomicepidemiology/plasmidfinder
+
 - Prodigal : https://github.com/hyattpd/Prodigal
 
 - Quast : https://quast.sourceforge.net/docs/manual.html
 
-
 ## References
+
+P. Di Tommaso, et al. Nextflow enables reproducible computational workflows. Nature Biotechnology 35, 316–319 (2017) doi:10.1038/nbt.3820
+
+Kurtzer, Gregory M., Vanessa Sochat, et Michael W. Bauer. « Singularity: Scientific Containers for Mobility of Compute ». Édité par Attila Gursoy. PLOS ONE 12, n o 5 (11 mai 2017): e0177459. https://doi.org/10.1371/journal.pone.0177459.
 
 Cornet L, Durieu B, Baert F, D’hooge E, Colignon D, Meunier L, Lupo V, Cleenwerck I, Daniel H-M, Rigouts L, Sirjacobs D, Declerck S, Vandamme P, Wilmotte A, Baurain D, Becker P (2022). The GEN-ERA toolbox: unified and reproducible workflows for research in microbial genomics. Submitted to GIGAscience
 
@@ -158,3 +181,5 @@ Alla Mikheenko, Andrey Prjibelski, Vladislav Saveliev, Dmitry Antipov, Alexey Gu
 Benchmarking of Methods for Genomic Taxonomy. Larsen MV, Cosentino S, Lukjancenko O, Saputra D, Rasmussen S, Hasman H, Sicheritz-Pontén T, Aarestrup FM, Ussery DW, Lund O. J Clin Microbiol. 2014 Feb 26. [Epub ahead of print]
 
 Hyatt, D., Chen, GL., LoCascio, P.F. et al. Prodigal: prokaryotic gene recognition and translation initiation site identification. BMC Bioinformatics 11, 119 (2010). https://doi.org/10.1186/1471-2105-11-119
+
+PlasmidFinder and pMLST: in silico detection and typing of plasmids. Carattoli A, Zankari E, Garcia-Fernandez A, Volby Larsen M, Lund O, Villa L, Aarestrup FM, Hasman H. Antimicrob. Agents Chemother. 2014. April 28th
