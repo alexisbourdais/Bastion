@@ -14,6 +14,7 @@ process final_report {
     path(kraken2_multi_report)
     path(kmerfinder_report)
     path(omark_report_multi)
+    path(plasmid_finder_multi)
 
     output:
     path("Bastion_FinalReport.tsv")
@@ -31,6 +32,7 @@ process final_report {
     --physeter ${physeter_multi_report} \
     --kraken ${kraken2_multi_report} \
     --kmerfinder ${kmerfinder_report} \
-    --omark ${omark_report_multi}
+    --omark ${omark_report_multi} \
+    --plasmidfinder ${plasmid_finder_multi}
     """
 }

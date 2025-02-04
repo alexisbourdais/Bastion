@@ -23,13 +23,14 @@ process plasmidfinder {
 
     label 'process_low'
 
-    publishDir "${baseDir}/${params.resultsDir}/PlasmidFinder/", mode: 'copy'
+    publishDir "${baseDir}/${params.resultsDir}/PlasmidFinder/", mode: 'copy', pattern: "*.json"
 
     input:
     path(assembly)
 
     output:
     path("${assembly.simpleName}.json")
+    path("${assembly.simpleName}_plasmidfinder_results.tsv"), emit: report
 
     script:
     """
@@ -38,5 +39,7 @@ process plasmidfinder {
     plasmidfinder.py -i ${assembly} -o \${results_file} -p ${params.db_plasmidfinder}
 
     mv \${results_file}/data.json ${assembly.simpleName}.json
+
+    plasmidfinder_json.py --input ${assembly.simpleName}.json --format ${params.format}
     """
 }
