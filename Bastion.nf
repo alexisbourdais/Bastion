@@ -166,7 +166,6 @@ workflow setup_wf {
         setup_Physeter()
         setup_Omark() 
         setup_Kmerfinder()
-        setup_Gtdbtk()
         setup_plasmidfinder()
     }
 }
