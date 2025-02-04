@@ -21,7 +21,7 @@
 
 3) Change script permissions in bin/ `chmod +x bin/*`
 
-4) Add to Data/ assemblies to analysis or select a directory with --assemblyDir and format with --format (default: fasta)
+4) Create a directory Data/ and add it assemblies to analysis or select a directory with --assemblyDir and format with --format (default: fasta)
 
 ### Set-Up database (Over 200 Go of memory required)
 
