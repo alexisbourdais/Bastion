@@ -25,7 +25,7 @@
 
 ### Set-Up database (Over 200 Go of memory required)
 
-- If you don't have any of the necessary databases, just run `nextflow run Bastion.nf -profile slurm,singularity --workflow setup --setAll`
+- If you don't have any of the necessary databases, just run `nextflow run Bastion.nf -profile slurm,singularity --singularity "-B /root/to/mount:root/to/mount" --workflow setup --setAll`
 - if you have some database already installed, run `nextflow run Bastion.nf -profile slurm,singularity --workflow setup --setBusco --setKraken2` in order to install Busco (Prokaryota+virus) and Kraken2 (PlusPFP-16 version) database for exemple (see the list of commands for other databases below)
 
 If you have problems installing the gtdbtk database automatically due to its size (102 Go), download it manually : https://ecogenomics.github.io/GTDBTk/installing/index.html
@@ -50,6 +50,8 @@ nextflow run Bastion.nf --help
     
     --workflow                      Select workflow :  'setup' to download database
                                                        'analysis' to run all analyses
+
+    --singularity "-B /home:/home -B ..."    Path to mount, default: /home
 
     OPTIONAL parameter
 
