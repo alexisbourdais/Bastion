@@ -206,7 +206,7 @@ workflow analysis_wf {
     krona_kraken(kraken2.out, "kraken")
     plasmidfinder(data_file)
     kmerfinder(data_file, "bacteria")
-    barrnap(data_file, "bac")
+    //barrnap(data_file, "bac")
 
     final_report(
         busco.out.report.collectFile(name: 'busco_multi.report'), \
@@ -219,7 +219,8 @@ workflow analysis_wf {
         physeter.out.report.collectFile(name: 'physeter_multi.report'), \
         kraken_split.out.collectFile(name: 'kraken2_multi.report'), \
         kmerfinder.out.report.collectFile(name: 'kmerfinder_multi.report'), \
-        annotation_wf.out.collectFile(name: 'omark_multi.report')
+        annotation_wf.out.collectFile(name: 'omark_multi.report'), \
+        plasmidfinder.out.report.collectFile(name: 'plasmidfinder_multi.report')
     )
 }
 

@@ -21,6 +21,7 @@ ap.add_argument("--kmerfinder", default='', required=False)
 ap.add_argument("--gtdbtk", default='', required=False)
 ap.add_argument("--physeter", default='', required=False)
 ap.add_argument("--kraken", default='', required=False)
+ap.add_argument("--plasmidfinder", default='', required=False)
 
 args = vars(ap.parse_args())
 
@@ -59,6 +60,9 @@ gtdbtk_reference_dic = {}
 eukcc_complet_dic = {}
 eukcc_contam_dic = {}
 
+omark_placement_dic = {}
+omark_score_dic = {}
+
 physeter_contam_dic = {}
 physeter_placement_dic = {}
 
@@ -68,10 +72,13 @@ kraken_placement_dic = {}
 kmerfinder_RefSeq_id_dic = {}
 kmerfinder_taxonomy_dic = {}
 kmerfinder_tot_template_Coverage_dic = {}
+kmerfinder_tot_query_Coverage_dic = {}
 
 omark_ref_dic = {}
 omark_score_dic = {}
 omark_contam_dic = {}
+
+plasmidfinder_hit_dic = {}
 
 ##############
 ### Script ###
@@ -222,10 +229,12 @@ if os.path.isfile(args['kmerfinder']):
             RefSeq_id = line[1]
             taxonomy = line[17]
             tot_template_Coverage = line[10]
+            tot_query_coverage = line[9]
         
             kmerfinder_RefSeq_id_dic[genome_id] = RefSeq_id
             kmerfinder_taxonomy_dic[genome_id] = taxonomy
             kmerfinder_tot_template_Coverage_dic[genome_id] = tot_template_Coverage
+            kmerfinder_tot_query_Coverage_dic = tot_query_coverage
 
 #Omark
 if os.path.isfile(args['omark']):
@@ -240,11 +249,20 @@ if os.path.isfile(args['omark']):
         omark_score_dic[genome_id] = score
         omark_contam_dic[genome_id] = contam
 
+#Plasmidfinder
+if os.path.isfile(args['plasmidfinder']):
+    plasmidfiner = csv.reader(open(args['plasmidfinder'], "r"), delimiter='\t')
+    for line in plasmidfiner:
+        genome_id = line[0]
+        plasmid_hit = line[1]
+
+        plasmidfinder_hit_dic[genome_id] = plasmid_hit
+
 ### Results
 results_file=open("Bastion_FinalReport.tsv", "a")
 print("Genome\t\
 Checkm_completeness\tCheckm_contamination\tCheckm_str\t\
-Busco_placemenent\tBusco_completeness\tBusco_single\tBusco_duplicate\tBusco_fragmented\tBusco_missing\t\
+Busco_placemenent\tBusco_completeness\tBusco_duplicate\t\
 GUNC_CSS\tGUNC_RRS\tGUNC_status\tGUNC_conta\t\
 Physeter_placement\tPhyseter_contamination\t\
 Kraken_placement\tKraken_contamination\t\
@@ -252,8 +270,9 @@ Checkm2_completeness\tCheckm2_contamination\t\
 Gtdbtk_placement\tGtdbtk_reference\t\
 Eukcc2_contamination\tEukcc2_completeness\t\
 quast_#contigs\tquast_tot_length\tquast_GC\tquast_N50\t\
-kmerfinder_RefSeq_id\tkmerfinder_taxonomy\tkmerfinder_tot_template_Coverage\t\
-Omark_Main_species\tOmark_score\tContam", file=results_file)
+kmerfinder_RefSeq_id\tkmerfinder_taxonomy\tKmerfinder_Tot_Template_Coverage\ttkmerfinder_Tot_Query_Coverage\t\
+Omark_Main_species\tOmark_score\tOmark_Contam\t\
+Plasmidfinder", file=results_file)
 
 for genome in genome_list:
     checkm1_complet=checkm1_complet_dic.get(genome)
@@ -295,14 +314,17 @@ for genome in genome_list:
     kmerfinder_RefSeq_id=kmerfinder_RefSeq_id_dic.get(genome)
     kmerfinder_taxonomy=kmerfinder_taxonomy_dic.get(genome)
     kmerfinder_tot_template_Coverage=kmerfinder_tot_template_Coverage_dic.get(genome)
+    kmerfinder_tot_query_Coverage=kmerfinder_tot_query_Coverage_dic.get(genome)
 
     omark_ref=omark_ref_dic.get(genome)
     omark_score=omark_score_dic.get(genome)
     omark_contam=omark_contam_dic.get(genome)
 
+    plasmid_results=plasmidfinder_hit_dic.get(genome)
+
     print(f"{genome}\t\
 {checkm1_complet}\t{checkm1_contam}\t{checkm1_str}\t\
-{busco_placement}\t{busco_complet}\t{busco_single}\t{busco_duplicated}\t{busco_fragmented}\t{busco_missing}\t\
+{busco_placement}\t{busco_complet}\t{busco_duplicated}\t\
 {gunc_css}\t{gunc_RRS}\t{gunc_status}\t{gunc_contam}\t\
 {physeter_placement}\t{physeter_contam}\t\
 {kraken_placement}\t{kraken_contam}\t\
@@ -310,5 +332,6 @@ for genome in genome_list:
 {gtdbtk_placement}\t{gtdbtk_reference}\t\
 {eukcc_contam}\t{eukcc_complet}\t\
 {quast_contig}\t{quast_length}\t{quast_gc}\t{quast_n50}\t\
-{kmerfinder_RefSeq_id}\t{kmerfinder_taxonomy}\t{kmerfinder_tot_template_Coverage}\t\
-{omark_ref}\t{omark_score}\t{omark_contam}", file=results_file)
+{kmerfinder_RefSeq_id}\t{kmerfinder_taxonomy}\t{kmerfinder_tot_template_Coverage}\t\{kmerfinder_tot_query_Coverage}t\
+{omark_ref}\t{omark_score}\t{omark_contam}\t\
+{plasmid_results}", file=results_file)
