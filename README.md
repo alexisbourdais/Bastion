@@ -19,14 +19,16 @@
 
 2) `git clone https://github.com/alexisbourdais/Bastion/`
 
-3) Change script permissions in bin/ `chmod +x bin/*`
+3) Change script permissions in **bin/** `chmod +x bin/*`
 
-4) Create a directory Data/ and add it assemblies to analysis or select a directory with --assemblyDir and format with --format (default: fasta)
+4) Create a directory **Data/** and add it assemblies to analysis or select a directory with `--assemblyDir` and format with `--format` (default: fasta)
 
 ### Set-Up database (Over 200 Go of memory required)
 
-- If you don't have any of the necessary databases, just run `nextflow run Bastion.nf -profile slurm,singularity --singularity "-B /root/to/mount:root/to/mount" --workflow setup --setAll`
+- If you don't have any of the necessary databases, just run `nextflow run Bastion.nf -profile slurm,singularity --singularity "-B /root/to/mount:root/to/mount" --workflow setup --setAll --setGtdbtk`
 - if you have some database already installed, run `nextflow run Bastion.nf -profile slurm,singularity --workflow setup --setBusco --setKraken2` in order to install Busco (Prokaryota+virus) and Kraken2 (PlusPFP-16 version) database for exemple (see the list of commands for other databases below)
+
+(GTDBTK database is not included in `--setAll`)
 
 If you have problems installing the gtdbtk database automatically due to its size (102 Go), download it manually : https://ecogenomics.github.io/GTDBTk/installing/index.html
 
