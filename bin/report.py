@@ -234,7 +234,7 @@ if os.path.isfile(args['kmerfinder']):
             kmerfinder_RefSeq_id_dic[genome_id] = RefSeq_id
             kmerfinder_taxonomy_dic[genome_id] = taxonomy
             kmerfinder_tot_template_Coverage_dic[genome_id] = tot_template_Coverage
-            kmerfinder_tot_query_Coverage_dic = tot_query_coverage
+            kmerfinder_tot_query_Coverage_dic[genome_id] = tot_query_coverage
 
 #Omark
 if os.path.isfile(args['omark']):
