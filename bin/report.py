@@ -270,7 +270,7 @@ Checkm2_completeness\tCheckm2_contamination\t\
 Gtdbtk_placement\tGtdbtk_reference\t\
 Eukcc2_contamination\tEukcc2_completeness\t\
 quast_#contigs\tquast_tot_length\tquast_GC\tquast_N50\t\
-kmerfinder_RefSeq_id\tkmerfinder_taxonomy\tKmerfinder_Tot_Template_Coverage\ttkmerfinder_Tot_Query_Coverage\t\
+kmerfinder_RefSeq_id\tkmerfinder_taxonomy\tKmerfinder_Tot_Template_Coverage\tKmerfinder_Tot_Query_Coverage\t\
 Omark_Main_species\tOmark_score\tOmark_Contam\t\
 Plasmidfinder", file=results_file)
 
@@ -332,6 +332,6 @@ for genome in genome_list:
 {gtdbtk_placement}\t{gtdbtk_reference}\t\
 {eukcc_contam}\t{eukcc_complet}\t\
 {quast_contig}\t{quast_length}\t{quast_gc}\t{quast_n50}\t\
-{kmerfinder_RefSeq_id}\t{kmerfinder_taxonomy}\t{kmerfinder_tot_template_Coverage}\t\{kmerfinder_tot_query_Coverage}t\
+{kmerfinder_RefSeq_id}\t{kmerfinder_taxonomy}\t{kmerfinder_tot_template_Coverage}\t{kmerfinder_tot_query_Coverage}\t\
 {omark_ref}\t{omark_score}\t{omark_contam}\t\
 {plasmid_results}", file=results_file)
