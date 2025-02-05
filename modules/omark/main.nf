@@ -19,8 +19,7 @@ process omark {
 
     label 'process_medium'
 
-    publishDir "${baseDir}/${params.resultsDir}/Omark/", mode: 'copy', pattern: "${proteins.simpleName}/*_detailed_summary.txt"
-    publishDir "${baseDir}/${params.resultsDir}/Omark/", mode: 'copy', pattern: "${proteins.simpleName}/*.png"
+    publishDir "${baseDir}/${params.resultsDir}/Omark/", mode: 'copy'
 
     input:
     path(proteins)
