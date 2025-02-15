@@ -9,7 +9,7 @@
 **Changement from original script :**
 - Nextflow dsl 2
 - Slurm and Conda or singularity profiles
-- Includes GTDBTK, Kmerfinder, Omark, PlasmidFinder and Barrnap tools
+- Includes GTDBTK, Kmerfinder, Omark, PlasmidFinder tools
 - Busco plots, Diamond plots from Gunc results and Krona from Kraken/Physeters results
 - Annotation with Prodigal
 
