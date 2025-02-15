@@ -2,12 +2,14 @@
 
 ## Overview
 
-**Bacterial ASsembly contaminaTION** is a nextflow pipeline allowing the automatic quality assemment of bacterial assembly. This project is largely inspired by the Genome quality assessment workflow from the **Genera** toolbox of Luc CORNET from the University of Liege: 
+**Bacterial ASsembly contaminaTION** is a nextflow pipeline allowing the automatic quality assemment of bacterial assembly. 
 
-**https://github.com/Lcornet/GENERA.**
+![screenshot](images/Bastion.png)
+
+This project is largely inspired by the Genome quality assessment workflow from the **Genera** toolbox of Luc CORNET from the University of Liege: **https://github.com/Lcornet/GENERA.**
 
 **Changement from original script :**
-- Nextflow dsl 2
+- Nextflow dsl2
 - Slurm and Conda or singularity profiles
 - Includes GTDBTK, Kmerfinder, Omark, PlasmidFinder tools
 - Busco plots, Diamond plots from Gunc results and Krona from Kraken/Physeters results
