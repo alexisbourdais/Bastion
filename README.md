@@ -15,13 +15,15 @@
 
 ## Quick start
 
-1) Install Nextflow, Singularity (and Conda if desired).
+1) Install **Nextflow**, **Singularity** (and Conda if desired).
 
 2) `git clone https://github.com/alexisbourdais/Bastion/`
 
 3) Change script permissions in **bin/** `chmod +x bin/*`
 
 4) Create a directory **Data/** and add it assemblies to analysis or select a directory with `--assemblyDir` and format with `--format` (default: fasta)
+
+5) Add depot image with `singularity remote add --no-login SylabsCloud cloud.sycloud.io` (if necessary, you can add this command to the .sh script before running `nexflow run`)
 
 ### Set-Up database (Over 200 Go of memory required)
 
@@ -45,7 +47,7 @@ nextflow run Bastion.nf --help
 
     -profile [standard]/slurm,      Select profile standard (local) or slurm. Default: standard          
              singularity/conda      Select profile singularity or conda. 
-                                    Physeter need singularity in both case and busco's conda env has mistakes.
+                                    Physeter and kraken's results treatment need singularity in both case and busco's conda env has mistakes.
     
     --workflow                      Select workflow :  'setup' to download database
                                                        'analysis' to run all analyses
