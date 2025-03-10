@@ -2,7 +2,7 @@
 
 ## Overview
 
-**Bacterial ASsembly contaminaTION** is a nextflow pipeline allowing the automatic quality assemment of bacterial assembly. 
+**Bacterial ASsembly contaminaTION** is a nextflow pipeline allowing the automatic quality assessment of bacterial assembly. 
 
 ![screenshot](images/Bastion.png)
 
